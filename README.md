@@ -8,5 +8,9 @@
 lancer la bd postgres :  
    ```sudo -u postgres -i```  
     ```cd chemin/dossier```  
-     ```psql -d dossier_medical```  
-    ```\d```
+     ```psql```  
+     ```DROP DATABASE dossier_medical;``` -- supprime la db  
+     ```CREATE DATABASE dossier_medical;``` -- cree la db  
+     ```psql -d dossier_medical -f dossier_medical.sql``` -- cree les tableau dans le db  
+     ```psql -d dossier_medical``` -- acceder a la db
+    ```\d``` -- permet de voir les tableau
