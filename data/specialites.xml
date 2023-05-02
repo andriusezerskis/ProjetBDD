@@ -1,0 +1,77 @@
+<specialite>
+	<name>Addictologie</name>
+	<medicament>systeme nerveux</medicament>
+	<medicament>divers</medicament>
+</specialite>
+<specialite>
+	<name>Allergologie</name>
+	<medicament>systeme respiratoire</medicament>
+	<medicament>organes sensoriels</medicament>
+</specialite>
+<specialite>
+	<name>Anesthésie-réanimation</name>
+	<medicament>systeme nerveux</medicament>
+</specialite>
+<specialite>
+	<name>Dermatologie et vénérologie</name>
+	<medicament>medicaments dermatologiques</medicament>
+	<medicament>antiparasitaires</medicament>
+	<medicament>divers</medicament>
+</specialite>
+<specialite>
+	<name>Endocrinologie-diabétologie-nutrition</name>
+	<medicament>hormones systemiques</medicament>
+	<medicament>organes sensoriels</medicament>
+</specialite>
+<specialite>
+	<name>Gynécologie médicale</name>
+	<medicament>systeme genito urinaire et hormones sexuelles</medicament>
+	<medicament>medicaments dermatologiques</medicament>
+	<medicament>antiparasitaires</medicament>
+</specialite>
+<specialite>
+	<name>Hématologie</name>
+	<medicament>sang et organes hematopoietiques</medicament>
+</specialite>
+<specialite>
+	<name>Hépato-gastro-entérologie</name>
+	<medicament>voies digestives et metabolisme</medicament>
+</specialite>
+<specialite>
+	<name>Médecine cardiovasculaire</name>
+	<medicament>sang et organes hematopoietiques</medicament>
+	<medicament>systeme cardiovasculaire</medicament>
+</specialite>
+<specialite>
+	<name>Maladies infectieuses et tropicales</name>
+	<medicament>antiinfectieux generaux a usage systemique</medicament>
+	<medicament>antiparasitaires</medicament>
+</specialite>
+<specialite>
+	<name>Néphrologie </name>
+	<medicament>systeme cardiovasculaire</medicament>
+	<medicament>systeme genito urinaire et hormones sexuelles</medicament>
+</specialite>
+<specialite>
+	<name>Neurologie</name>
+	<medicament>systeme nerveux</medicament>
+	<medicament>muscle et squelette</medicament>
+	<medicament>divers</medicament>
+</specialite>
+<specialite>
+	<name>Oncologie</name>
+	<medicament>antineoplasiques et immunomodulateurs</medicament>
+</specialite>
+<specialite>
+	<name>Pneumologie</name>
+	<medicament>systeme respiratoire</medicament>
+</specialite>
+<specialite>
+	<name>Psychiatrie</name>
+	<medicament>organes sensoriels</medicament>
+	<medicament>systeme nerveux</medicament>
+</specialite>
+<specialite>
+	<name>Rhumatologie</name>
+	<medicament>muscle et squelette</medicament>
+</specialite>
