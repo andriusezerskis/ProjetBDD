@@ -2,7 +2,7 @@ CREATE DATABASE dossier_medical;
 
 -- Création de la table 'patient'
 CREATE TABLE patient (
-    NISS VARCHAR(15) PRIMARY KEY,
+    NISS VARCHAR(15) NOT NULL,
     nom VARCHAR(50) NOT NULL,
     prenom VARCHAR(50) NOT NULL,
     genre INT NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE patient (
 
 -- Création de la table 'medecin'
 CREATE TABLE medecin (
-    inami VARCHAR(15) PRIMARY KEY,
+    inami_m VARCHAR(15) PRIMARY KEY,
     nom VARCHAR(50) NOT NULL,
     mail VARCHAR(100),
     specialite VARCHAR(50) NOT NULL,
@@ -24,8 +24,7 @@ CREATE TABLE medecin (
 
 -- Création de la table 'pharmacien'
 CREATE TABLE pharmacien (
-    inami VARCHAR(15) PRIMARY KEY,
-    nom VARCHAR(50) NOT NULL,
+    inami_p VARCHAR(15) PRIMARY KEY,
     mail VARCHAR(100),
     telephone VARCHAR(15)
 );
@@ -65,8 +64,8 @@ CREATE TABLE prescription (
     NISS_patient VARCHAR(15) NOT NULL,
     date_prescription DATE NOT NULL,
     duree_traitement INT NOT NULL,
-    FOREIGN KEY (inami_medecin) REFERENCES medecin(inami),
-    FOREIGN KEY (inami_pharmacien) REFERENCES pharmacien(inami),
+    FOREIGN KEY (inami_medecin) REFERENCES medecin(inami_m),
+    FOREIGN KEY (inami_pharmacien) REFERENCES pharmacien(inami_p),
     FOREIGN KEY (medicament_id) REFERENCES medicament(id),
     FOREIGN KEY (NISS_patient) REFERENCES patient(NISS)
 );
@@ -77,3 +76,8 @@ CREATE TABLE specialite (
     name VARCHAR(50) NOT NULL,
     medicament_systeme_anatomique VARCHAR(100) NOT NULL
 );
+
+
+
+
+
