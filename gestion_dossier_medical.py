@@ -74,7 +74,65 @@ class Database:
             sql = """UPDATE patient SET inami_pharmacien = %s WHERE NISS = %s"""
             cursor.execute(sql, (inami_pharmacien, niss))
             self.conn.commit()
+    
 
+    def get_medical_info(self, NISS_patient):
+        with self.conn.cursor() as cursor:
+            # informations du patient
+            cursor.execute("SELECT * FROM patient WHERE NISS=%s", (NISS_patient,))
+            patient_info = cursor.fetchone()
+
+            # diagnostics du patient
+            cursor.execute("SELECT * FROM diagnostic WHERE NISS_patient=%s", (NISS_patient,))
+            diagnostics = cursor.fetchall()
+
+            # prescriptions du patient
+            cursor.execute("SELECT * FROM prescription WHERE NISS_patient=%s", (NISS_patient,))
+            prescriptions = cursor.fetchall()
+
+            # informations des médecins ayant prescrit les médicaments au patient
+            doctors = set([prescription[1] for prescription in prescriptions])
+            doctor_info = []
+            for inami in doctors:
+                cursor.execute("SELECT * FROM medecin WHERE inami=%s", (inami,))
+                doctor_info.append(cursor.fetchone())
+
+            # informations des pharmaciens ayant délivré les médicaments au patient
+            pharmacists = set([prescription[2] for prescription in prescriptions])
+            pharmacist_info = []
+            for inami in pharmacists:
+                cursor.execute("SELECT * FROM pharmacien WHERE inami=%s", (inami,))
+                pharmacist_info.append(cursor.fetchone())
+
+            # informations sur les médicaments prescrits au patient
+            medicaments = set([prescription[3] for prescription in prescriptions])
+            medicament_info = []
+            for medicament_id in medicaments:
+                cursor.execute("SELECT * FROM medicament WHERE id=%s", (medicament_id,))
+                medicament_info.append(cursor.fetchone())
+
+        return {
+            'patient_info': patient_info,
+            'diagnostics': diagnostics,
+            'prescriptions': prescriptions,
+            'doctor_info': doctor_info,
+            'pharmacist_info': pharmacist_info,
+            'medicament_info': medicament_info
+        }
+    
+    def clear_database(self):
+        tables = ['patient', 'medecin', 'pharmacien', 'pathologie', 'medicament', 'diagnostic', 'prescription', 'specialite']
+        with self.conn.cursor() as cursor:
+            for table_name in tables:
+                cursor.execute(f'TRUNCATE {table_name} CASCADE')
+            self.conn.commit()
+
+
+        
+        
+        
+        
+        
     
 # Contrôleur
 class Controller:
@@ -142,7 +200,7 @@ class Controller:
             self.view.main_menu()
 
     def update_patient_medecin(self, patient):
-        inami_medecin = self.view.ask_inami_medecin()
+        inami_medecin = self.view.ask_inami()
         self.db.update_patient_medecin(patient['NISS'], inami_medecin)
         self.view.display_success("Médecin mis à jour avec succès.")
         patient['inami_medecin'] = inami_medecin
@@ -150,14 +208,22 @@ class Controller:
         self.view.main_menu()
 
     def update_patient_pharmacien(self, patient):
-        inami_pharmacien = self.view.ask_inami_pharmacien()
+        inami_pharmacien = self.view.ask_inami()
         self.db.update_patient_pharmacien(patient['NISS'], inami_pharmacien)
         self.view.display_success("Pharmacien mis à jour avec succès.")
         patient['inami_pharmacien'] = inami_pharmacien
         self.view.print_summary("Patient", "mis(e) à jour", patient)
         self.view.main_menu()
-
     
+    def view_medical_info(self, patient):
+        medical_info = self.db.get_medical_info(patient["NISS"])
+        if medical_info:
+            self.view.display_medical_info(medical_info)
+        else:
+            self.view.display_error("Aucune information médicale trouvée.")
+        self.view.patient_menu(patient)
+
+        
 # Vue
 class AskingView:
     
@@ -276,8 +342,7 @@ class View(AskingView):
             elif choice == "2":
                 self.controller.update_patient_pharmacien(patient)
             elif choice == "3":
-                print("Consultation des informations médicales à implémenter.")
-                self.patient_menu(patient)
+                self.controller.view_medical_info(patient)
             elif choice == "4":
                 print("Consultation des traitements à implémenter.")
                 self.patient_menu(patient)
@@ -304,9 +369,19 @@ class View(AskingView):
             print(f"{key}: {value}")
         print("\n")
     
+    def display_medical_info(self, medical_info):
+        print("\nInformations médicales :")
+        for key, value in medical_info.items():
+            print(f"{key}: {value}")
+            print("\n")
+        print("\n")
+
+    
     
         
 if __name__ == "__main__":
+    #db = Database()
+    #db.clear_database()
 
     controller = Controller()
     view = View(controller)
