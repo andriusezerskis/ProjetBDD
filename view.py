@@ -2,8 +2,6 @@ import re
 import os
 
 # Vue
-
-
 class AskingView:
 
     def ask_niss(self):
@@ -124,8 +122,7 @@ class View(AskingView):
             elif choice == "2":
                 self.controller.update_patient_pharmacien(patient)
             elif choice == "3":
-                print("Consultation des informations médicales à implémenter.")
-                self.patient_menu(patient)
+                self.controller.view_medical_info(patient)
             elif choice == "4":
                 print("Consultation des traitements à implémenter.")
                 self.patient_menu(patient)
@@ -149,4 +146,11 @@ class View(AskingView):
         print(f"\n{title} {action} avec succès :")
         for key, value in data.items():
             print(f"{key}: {value}")
+        print("\n")
+
+    def display_medical_info(self, medical_info):
+        print("\nInformations médicales :")
+        for key, value in medical_info.items():
+            print(f"{key}: {value}")
+            print("\n")
         print("\n")

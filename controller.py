@@ -2,6 +2,8 @@ from gestion_dossier_medical import Database
 from view import View
 # Contrôleur
 
+# Contrôleur
+
 
 class Controller:
     def __init__(self):
@@ -88,3 +90,11 @@ class Controller:
         patient['inami_pharmacien'] = inami_pharmacien
         self.view.print_summary("Patient", "mis(e) à jour", patient)
         self.view.main_menu()
+
+    def view_medical_info(self, patient):
+        medical_info = self.db.get_medical_info(patient["NISS"])
+        if medical_info:
+            self.view.display_medical_info(medical_info)
+        else:
+            self.view.display_error("Aucune information médicale trouvée.")
+        self.view.patient_menu(patient)
