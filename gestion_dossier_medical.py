@@ -56,9 +56,7 @@ class Database:
         
         if result:
             keys = ["NISS", "nom", "prenom", "genre", "date_de_naissance", "mail", "telephone", "inami_medecin", "inami_pharmacien"]
-            test = dict(zip(keys, result))
-            print(test)
-            return test
+            return dict(zip(keys, result))
         else:
             return None
 
@@ -77,25 +75,6 @@ class Database:
             cursor.execute(sql, (inami_pharmacien, niss))
             self.conn.commit()
 
-    ############################## A SUPPRIMER ################################
-    def del_patient(self, niss):
-        with self.conn.cursor() as cursor:
-            sql = """DELETE FROM patient WHERE NISS = %s"""
-            cursor.execute(sql, (niss,))
-            self.conn.commit()
-    
-    def del_medecin(self, inami):
-        with self.conn.cursor() as cursor:
-            sql = """DELETE FROM medecin WHERE inami = %s"""
-            cursor.execute(sql, (inami,))
-            self.conn.commit()
-    
-    def del_pharmacien(self, inami):
-        with self.conn.cursor() as cursor:
-            sql = """DELETE FROM pharmacien WHERE inami = %s"""
-            cursor.execute(sql, (inami,))
-            self.conn.commit()
-    ############################################################################
     
 # Contrôleur
 class Controller:
@@ -112,13 +91,16 @@ class Controller:
         date_de_naissance = self.view.ask_date_de_naissance()
         mail = self.view.ask_mail()
         telephone = self.view.ask_telephone()
-        inami_medecin = self.view.ask_inami_medecin()
-        inami_pharmacien = self.view.ask_inami_pharmacien()
+        inami_medecin = self.view.ask_inami()
+        inami_pharmacien = self.view.ask_inami()
         succes = self.db.add_patient(niss, nom, prenom, genre, date_de_naissance, mail, telephone, inami_medecin, inami_pharmacien)
         if succes:
-            self.view.patient_added({"NISS": niss, "nom": nom, "prenom": prenom, "genre": genre, "date_de_naissance": date_de_naissance, "mail": mail, "telephone": telephone, "inami_medecin": inami_medecin, "inami_pharmacien": inami_pharmacien})
-        else :
-            print("Un patient avec ce numéro NISS existe déjà.")
+            data = {"NISS": niss, "nom": nom, "prenom": prenom, "genre": genre, 
+                "date_de_naissance": date_de_naissance, "mail": mail, "telephone": telephone, 
+                "inami_medecin": inami_medecin, "inami_pharmacien": inami_pharmacien}
+            self.view.print_summary("Patient", "ajouté(e)", data)
+        else:
+            self.view.display_error("Un patient avec ce numéro NISS existe déjà.")
         self.view.main_menu()
 
     def add_medecin(self):
@@ -129,12 +111,12 @@ class Controller:
         telephone = self.view.ask_telephone()
         success = self.db.add_medecin(inami, nom, mail, specialite, telephone)
         if success:
-            self.view.medecin_added({"inami": inami, "nom": nom, "mail": mail, "specialite": specialite, "telephone": telephone})
+            data = {"inami": inami, "nom": nom, "mail": mail, "specialite": specialite, "telephone": telephone}
+            self.view.print_summary("Médecin", "ajouté(e)", data)
         else:
-            print("Un médecin avec ce numéro INAMI existe déjà.")
+            self.view.display_error("Un médecin avec ce numéro INAMI existe déjà.")
         self.view.main_menu()
 
-            
     def add_pharmacien(self):
         inami = self.view.ask_inami()
         nom = self.view.ask_nom()
@@ -142,9 +124,11 @@ class Controller:
         telephone = self.view.ask_telephone()
         succes = self.db.add_pharmacien(inami, nom, mail, telephone)
         if succes:
-            self.view.pharmacien_added({"inami": inami, "nom": nom, "mail": mail, "telephone": telephone})
+            data = {"inami": inami, "nom": nom, "mail": mail, "telephone": telephone}
+            self.view.print_summary("Pharmacien", "ajouté(e)", data)
         else:
-            print("Un pharmacien avec ce numéro INAMI existe déjà.")
+            self.view.display_error("Un pharmacien avec ce numéro INAMI existe déjà.")
+        self.view.main_menu()
         self.view.main_menu()
     
     def login_patient(self):
@@ -154,73 +138,29 @@ class Controller:
         if patient:
             self.view.patient_menu(patient)
         else:
-            print("NISS ou date de naissance incorrects.")
+            self.view.display_error("NISS ou date de naissance incorrects.")
             self.view.main_menu()
 
-    def update_patient_medecin(self, niss):
+    def update_patient_medecin(self, patient):
         inami_medecin = self.view.ask_inami_medecin()
-        self.db.update_patient_medecin(niss, inami_medecin)
-        print("Médecin mis à jour avec succès.")
+        self.db.update_patient_medecin(patient['NISS'], inami_medecin)
+        self.view.display_success("Médecin mis à jour avec succès.")
+        patient['inami_medecin'] = inami_medecin
+        self.view.print_summary("Patient", "mis(e) à jour", patient)
         self.view.main_menu()
 
-    def update_patient_pharmacien(self, niss):
+    def update_patient_pharmacien(self, patient):
         inami_pharmacien = self.view.ask_inami_pharmacien()
-        self.db.update_patient_pharmacien(niss, inami_pharmacien)
-        print("Pharmacien mis à jour avec succès.")
+        self.db.update_patient_pharmacien(patient['NISS'], inami_pharmacien)
+        self.view.display_success("Pharmacien mis à jour avec succès.")
+        patient['inami_pharmacien'] = inami_pharmacien
+        self.view.print_summary("Patient", "mis(e) à jour", patient)
         self.view.main_menu()
 
     
-    ####################### A supprimer apres #######################
-    def del_patient(self):
-        niss = self.view.ask_niss()
-        self.db.del_patient(niss)
-        self.view.patient_deleted(niss)
-        self.view.main_menu()
-    
-    def del_medecin(self):
-        inami = self.view.ask_inami()
-        self.db.del_medecin(inami)
-        self.view.medecin_deleted(inami)
-        self.view.main_menu()
-    
-    def del_pharmacien(self):
-        inami = self.view.ask_inami()
-        self.db.del_pharmacien(inami)
-        self.view.pharmacien_deleted(inami)
-        self.view.main_menu()
-    #################################################################
 # Vue
-class View:
+class AskingView:
     
-    def __init__(self, controller):
-        self.controller = controller
-    
-    def main_menu(self):
-        print("Bienvenue dans le gestionnaire de dossier médical")
-        print("1. Ajouter un patient")
-        print("2. Ajouter un médecin")
-        print("3. Ajouter un pharmacien")
-        print("4. Se connecter en tant que patient")
-        print("5. Quitter")
-        print("6. Supprimer")
-        choice = input("Que voulez-vous faire ? ")
-        if choice == "1":
-            self.controller.add_patient()
-        elif choice == "2":
-            self.controller.add_medecin()
-        elif choice == "3":
-            self.controller.add_pharmacien()
-        elif choice == "4":
-            self.controller.login_patient()
-        elif choice == "5":
-            print("Au revoir !")
-            exit()
-        elif choice == "6":
-            self.controller.del_medecin()  # mdofif ici pour sup un patient ou pharmacien
-        else:
-            print("Choix invalide")
-            self.main_menu()
-
     def ask_niss(self):
         niss = input("Entrez le NISS du patient : ")
         if not re.match(r"^\d{10,15}$", niss):
@@ -258,8 +198,8 @@ class View:
 
     def ask_inami(self):
         inami = input("Entrez le numéro INAMI : ")
-        if not re.match(r"^\d{11,15}$", inami):
-            print("Le numéro INAMI doit être composé de 11 à 15 chiffres")
+        if not re.match(r"^\d{9,15}$", inami):
+            print("Le numéro INAMI doit être composé de 9 à 15 chiffres")
             return self.ask_inami()
         return inami
 
@@ -288,78 +228,83 @@ class View:
             return self.ask_mail()
         return mail
 
-
-    def ask_inami_medecin(self):
-        inami_medecin = input("Entrez le numéro INAMI du médecin : ")
-        if not re.match(r"^\d{11,15}$", inami_medecin):
-            print("Le numéro INAMI du médecin doit être composé de 11 à 15 chiffres")
-            return self.ask_inami_medecin()
-        return inami_medecin
-
-    def ask_inami_pharmacien(self):
-        inami_pharmacien = input("Entrez le numéro INAMI du pharmacien : ")
-        if not re.match(r"^\d{11,15}$", inami_pharmacien):
-            print("Le numéro INAMI du pharmacien doit être composé de 11 à 15 chiffres")
-            return self.ask_inami_pharmacien()
-        return inami_pharmacien
-
-    def patient_added(self, data):
-        self.print_summary("Patient", data)
-
-    def medecin_added(self, data):
-        self.print_summary("Médecin", data)
-
-    def pharmacien_added(self, data):
-        self.print_summary("Pharmacien", data)
+class View(AskingView):
     
-    ########################### A supprimer #########################################
-    def patient_deleted(self, niss):
-        os.system('clear')
-        print(f"\nPatient avec NISS {niss} supprimé(e) avec succès\n")
+    def __init__(self, controller):
+        self.controller = controller
     
-    def medecin_deleted(self, inami):
-        os.system('clear')
-        print(f"\nMédecin avec INAMI {inami} supprimé(e) avec succès\n")
+    def main_menu(self):
+        try:
+            print("Bienvenue dans le gestionnaire de dossier médical\n")
+            print("1. Ajouter un patient")
+            print("2. Ajouter un médecin")
+            print("3. Ajouter un pharmacien")
+            print("4. Se connecter en tant que patient")
+            print("5. Quitter")
+            choice = input("Que voulez-vous faire ? ")
+            if choice == "1":
+                self.controller.add_patient()
+            elif choice == "2":
+                self.controller.add_medecin()
+            elif choice == "3":
+                self.controller.add_pharmacien()
+            elif choice == "4":
+                os.system('clear')
+                self.controller.login_patient()
+            elif choice == "5":
+                exit()
+            else:
+                print("Choix invalide")
+                self.main_menu()
+        except KeyboardInterrupt:
+            print("\n")
+            exit()
+        
     
-    def pharmacien_deleted(self, inami):
-        os.system('clear')
-        print(f"\nPharmacien avec INAMI {inami} supprimé(e) avec succès\n")
-    #################################################################################
+    def patient_menu(self, patient):
+        try:
+            print(f"\nBonjour {patient['nom']} {patient['prenom']}\n")
+            print("Menu patient:")
+            print("1. Modifier médecin de référence")
+            print("2. Modifier pharmacien de référence")
+            print("3. Consulter les informations médicales")
+            print("4. Consulter les traitements")
+            print("5. Retour")
+            choice = input("Que voulez-vous faire ? ")
+            if choice == "1":
+                self.controller.update_patient_medecin(patient)
+            elif choice == "2":
+                self.controller.update_patient_pharmacien(patient)
+            elif choice == "3":
+                print("Consultation des informations médicales à implémenter.")
+                self.patient_menu(patient)
+            elif choice == "4":
+                print("Consultation des traitements à implémenter.")
+                self.patient_menu(patient)
+            elif choice == "5":
+                self.controller.view.main_menu()
+            else:
+                print("Choix invalide")
+                self.patient_menu(patient)
+        except KeyboardInterrupt:
+            print("\n")
+            exit()
 
-    def print_summary(self, title, data):
+
+    def display_error(self, error_message):
+        print(error_message)
+
+    def display_success(self, success_message):
+        print(success_message)
+
+    def print_summary(self, title, action, data):
         os.system('clear')
-        print(f"\n{title} ajouté(e) avec succès :")
+        print(f"\n{title} {action} avec succès :")
         for key, value in data.items():
             print(f"{key}: {value}")
         print("\n")
     
-    def patient_menu(self, patient):
-        print(f"\nBonjour {patient['prenom']} {patient['nom']}")
-        print("\nMenu patient:")
-        print("1. Modifier médecin de référence")
-        print("2. Modifier pharmacien de référence")
-        print("3. Consulter les informations médicales")
-        print("4. Consulter les traitements")
-        print("5. Retour")
-        choice = input("Que voulez-vous faire ? ")
-        if choice == "1":
-            self.controller.update_patient_medecin(patient["NISS"])
-        elif choice == "2":
-            self.controller.update_patient_pharmacien(patient["NISS"])
-        elif choice == "3":
-            print("Consultation des informations médicales à implémenter.")
-            self.patient_menu(patient)
-        elif choice == "4":
-            print("Consultation des traitements à implémenter.")
-            self.patient_menu(patient)
-        elif choice == "5":
-            self.controller.view.main_menu()
-        else:
-            print("Choix invalide")
-            self.patient_menu(patient)
-
-
-        
+    
         
 if __name__ == "__main__":
 
