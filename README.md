@@ -33,7 +33,7 @@ Suivez les étapes ci-dessous pour créer la base de données :
 
 ## Gestion de la base de données
 
--Pour initialiser la base de données, exécutez les commandes suivantes : ```make init```
+- Pour initialiser la base de données, exécutez les commandes suivantes : ```make init```
 
 - Pour effacer les données de la base de données, exécutez les commandes suivantes : ```make clean```
 
