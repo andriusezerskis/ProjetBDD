@@ -2,7 +2,7 @@ CREATE DATABASE dossier_medical;
 
 -- Création de la table 'patient'
 CREATE TABLE patient (
-    NISS VARCHAR(15) NOT NULL,
+    NISS VARCHAR(15) PRIMARY KEY,
     nom VARCHAR(50) NOT NULL,
     prenom VARCHAR(50) NOT NULL,
     genre INT NOT NULL,
@@ -25,6 +25,7 @@ CREATE TABLE medecin (
 -- Création de la table 'pharmacien'
 CREATE TABLE pharmacien (
     inami_p VARCHAR(15) PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
     mail VARCHAR(100),
     telephone VARCHAR(15)
 );

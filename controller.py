@@ -2,14 +2,13 @@ from gestion_dossier_medical import Database
 from view import View
 # Contrôleur
 
-# Contrôleur
-
 
 class Controller:
     def __init__(self):
-        self.db = Database()
         self.view = View(self)
         self.view.main_menu()
+        self.db = Database()
+        self.db.clear_database()
 
     def add_patient(self):
         niss = self.view.ask_niss()

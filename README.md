@@ -20,15 +20,16 @@ Suivez les étapes ci-dessous pour créer la base de données :
    ```
    1. sudo -u postgres -i
    2. psql
-   3. DROP DATABASE dossier_medical; # si elle est déjà cree
+   3. DROP DATABASE IF EXISTS dossier_medical; # si elle est déjà cree
    4. CREATE DATABASE dossier_medical; 
    5. \q   # Pour quitter
-   6. cd chemin/dossier/du/dossier
-   7. psql -d dossier_medical -f dossier_medical.sql
-   8. psql -d dossier_medical
-   9. \d   # Vérifie que la base de données est bien créée
-   10. \q
-   11. exit  # Revenir au terminal normal
+   6. exit
+   7. cd chemin/dossier/du/dossier
+   8. psql -d dossier_medical -f dossier_medical.sql
+   9. psql -d dossier_medical
+   10. \d   # Vérifie que la base de données est bien créée
+   11. \q
+   12. exit  # Revenir au terminal normal
    ```
 
 ## Initialisation de la base de données

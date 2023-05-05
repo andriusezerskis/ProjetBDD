@@ -36,10 +36,14 @@ def insert_patients(conn, file_path, node_name):
         nom = get_text(patient.find('nom'))
         prenom = get_text(patient.find('prenom'))
         telephone = get_text(patient.find('telephone'))
+        # print(niss, nom)
+        # cursor.execute("""SELECT * FROM patient""")
+        # for table in cursor.fetchall():
+        #    print(table)
 
         sql = """INSERT INTO patient (NISS, nom, prenom, genre, date_de_naissance, mail, telephone, inami_medecin, inami_pharmacien)
                  VALUES ( %s, %s, %s, %s, TO_DATE(%s, 'MM/DD/YYYY'), %s, %s, %s, %s)"""
-        cursor.execute(sql, ( niss, nom, prenom, genre, date_de_naissance,
+        cursor.execute(sql, (niss, nom, prenom, genre, date_de_naissance,
                        mail, telephone, inami_medecin, inami_pharmacien))
 
     conn.commit()
@@ -51,13 +55,13 @@ def insert_medecins(conn, file_path, node_name):
     root, cursor = open_file(conn, file_path, node_name)
 
     for medecin in root.findall('medecin'):
-        inami_m = get_text(medecin.find('inami_m'))
+        inami_m = get_text(medecin.find('inami'))
         mail = get_text(medecin.find('mail'))
         nom = get_text(medecin.find('nom'))
         specialite = get_text(medecin.find('specialite'))
         telephone = get_text(medecin.find('telephone'))
 
-        sql = """INSERT INTO medecin (inami, nom, mail, specialite, telephone)
+        sql = """INSERT INTO medecin (inami_m, nom, mail, specialite, telephone)
                 VALUES (%s, %s, %s, %s, %s)"""
         cursor.execute(sql, (inami_m, nom, mail, specialite, telephone))
 
@@ -70,7 +74,7 @@ def insert_pharmaciens(conn, file_path, node_name):
     root, cursor = open_file(conn, file_path, node_name)
 
     for pharmacien in root.findall('pharmacien'):
-        inami_p = get_text(pharmacien.find('inami_p'))
+        inami_p = get_text(pharmacien.find('inami'))
         mail = get_text(pharmacien.find('mail'))
         nom = get_text(pharmacien.find('nom'))
         telephone = get_text(pharmacien.find('telephone'))
@@ -116,7 +120,7 @@ def insert_diagnostics(conn, file_path, node_name):
         pathologie_id = get_pathologie_id(conn, pathologie_nom)
         if pathologie_id is not None:
             sql = """INSERT INTO diagnostic (NISS_patient, date_diagnostic, pathologie_id)
-                    VALUES (%s, %s, %s)"""
+                    VALUES (%s, TO_DATE(%s, 'MM/DD/YYYY'), %s)"""
             cursor.execute(sql, (NISS_patient, date_diagnostic, pathologie_id))
 
         else:
@@ -150,7 +154,7 @@ def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, med
             return
 
         cur.execute(
-            "INSERT INTO prescription (NISS_patient, inami_medecin, inami_pharmacien, medicament_id, date_prescription, duree_traitement) VALUES (%s, %s, %s, %s, %s, %s)",
+            "INSERT INTO prescription (NISS_patient, inami_medecin, inami_pharmacien, medicament_id, date_prescription, duree_traitement) VALUES (%s, %s, %s, %s, TO_DATE(%s, 'MM/DD/YYYY'), %s)",
             (NISS_patient, inami_medecin, inami_pharmacien,
              medicament_id, date_prescription, duree_traitement)
         )

@@ -1,8 +1,5 @@
 import psycopg2
 
-from controller import Controller
-from view import View
-
 
 # Modèle
 class Database:
@@ -136,16 +133,6 @@ class Database:
                   'medicament', 'diagnostic', 'prescription', 'specialite']
         with self.conn.cursor() as cursor:
             for table_name in tables:
-                cursor.execute(f'TRUNCATE {table_name} CASCADE')
-            self.conn.commit()
-
-
-if __name__ == "__main__":
-    # db = Database()
-    # db.clear_database()
-
-    controller = Controller()
-    view = View(controller)
-
-    while True:
-        view.main_menu()
+                cursor.execute(f'TRUNCATE {table_name} CASCADE;')
+                self.conn.commit()
+            cursor.execute("""SELECT * FROM patient""")

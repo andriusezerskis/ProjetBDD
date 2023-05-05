@@ -1,6 +1,9 @@
 import psycopg2
+from controller import Controller
 
 from fileLoader import insert_diagnostics, insert_medecins, insert_medicaments, insert_pathologies, insert_patients, insert_pharmaciens, insert_prescriptions, insert_specialites
+from gestion_dossier_medical import Database
+from view import View
 
 
 def main():
@@ -42,5 +45,7 @@ def main():
 
 if __name__ == "__main__":
     print("Insertion des données dans la base de données...")
+    db = Database()
+    db.clear_database()
     main()
     print("Insertion terminée.")
