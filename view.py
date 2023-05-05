@@ -1,6 +1,6 @@
 import re
 import os
-
+from tabulate import tabulate
 
 class AskingView:
 
@@ -152,7 +152,21 @@ class MainView(AskingView):
 
     def display_medical_info(self, medical_info):
         print("\nInformations médicales :")
+        headers_dico = {'diagnostics' : ["index", "Niss du patient", "date de prescription", "jspl"], 
+                        'prescriptions' : ['index'  , 'NISS du médecin', 'jsp', 'jsp'],
+                        'doctor_info' : ['NISS', 'nom de famille', 'spécialité', 'email'],
+                        'pharmacist_info' : ['NISS', 'nom de famille', "email", 'idk'],
+                        'medicament_info': ['id', 'nom_dci', "nom_commercial", 'specialite']}
         for key, value in medical_info.items():
-            print(f"{key}: {value}")
+            print(f"{key} : ")
+            if (key != 'patient_info'):
+                print(tabulate(value, headers=headers_dico.get(key), tablefmt='fancy_grid'))
+            print("\n")
+        print("\n")
+
+    def display_traitements(self, medical_info):
+        print("\nTraitements:")
+        for value in medical_info['traitements']:
+            print(f"{value}")
             print("\n")
         print("\n")

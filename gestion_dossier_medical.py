@@ -1,4 +1,3 @@
-import psycopg2
 
 from controller import Controller
 from view import MainView
