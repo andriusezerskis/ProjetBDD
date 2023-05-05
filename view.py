@@ -121,10 +121,9 @@ class MainView(AskingView):
             elif choice == "2":
                 self.controller.update_patient_pharmacien(patient)
             elif choice == "3":
-                self.controller.view_medical_info(patient)
+                self.controller.medical_info(patient)
             elif choice == "4":
-                print("Consultation des traitements à implémenter.")
-                self.patient_menu(patient)
+                self.controller.traitements(patient)
             elif choice == "5":
                 os.system('clear')
                 self.controller.view.main_menu()
@@ -151,20 +150,14 @@ class MainView(AskingView):
         print("\n")
 
     def display_medical_info(self, medical_info):
+        os.system('clear')
         print("\nInformations médicales :")
-        headers_dico = {'diagnostics' : ["index", "Niss du patient", "date de prescription", "jspl"], 
-                        'prescriptions' : ['index'  , 'NISS du médecin', 'jsp', 'jsp'],
-                        'doctor_info' : ['NISS', 'nom de famille', 'spécialité', 'email'],
-                        'pharmacist_info' : ['NISS', 'nom de famille', "email", 'idk'],
-                        'medicament_info': ['id', 'nom_dci', "nom_commercial", 'specialite']}
-        for key, value in medical_info.items():
-            print(f"{key} : ")
-            if (key != 'patient_info'):
-                print(tabulate(value, headers=headers_dico.get(key), tablefmt='fancy_grid'))
-            print("\n")
-        print("\n")
+        headers = ["Date du diagnostic", "Nom de la pathologie"]
+        print(tabulate(medical_info, headers=headers, tablefmt='fancy_grid'))
+
 
     def display_traitements(self, medical_info):
+        os.system('clear')
         print("\nTraitements:")
         for value in medical_info['traitements']:
             print(f"{value}")
