@@ -1,13 +1,13 @@
 import re
 import os
 
-# Vue
+
 class AskingView:
 
     def ask_niss(self):
         niss = input("Entrez le NISS du patient : ")
         if not re.match(r"^\d{10,15}$", niss):
-            print("Le NISS doit être composé de 11 chiffres")
+            print("Le NISS doit être composé de 10 à 15 chiffres")
             return self.ask_niss()
         return niss
 
@@ -34,17 +34,17 @@ class AskingView:
 
     def ask_date_de_naissance(self):
         date_de_naissance = input(
-            "Entrez la date de naissance du patient (format YYYY-MM-DD : ")
+            "Entrez la date de naissance du patient (format YYYY-MM-DD) : ")
         if not re.match(r"^\d{4}-\d{2}-\d{2}$", date_de_naissance):
             print("La date de naissance doit être au format YYYY-MM-DD")
             return self.ask_date_de_naissance()
         return date_de_naissance
 
-    def ask_inami(self):
-        inami = input("Entrez le numéro INAMI : ")
+    def ask_inami(self, profession):
+        inami = input(f"Entrez le numéro INAMI du {profession} : ")
         if not re.match(r"^\d{9,15}$", inami):
             print("Le numéro INAMI doit être composé de 9 à 15 chiffres")
-            return self.ask_inami()
+            return self.ask_inami(profession)
         return inami
 
     def ask_specialite(self):
@@ -74,8 +74,7 @@ class AskingView:
             return self.ask_mail()
         return mail
 
-
-class View(AskingView):
+class MainView(AskingView):
 
     def __init__(self, controller):
         self.controller = controller
@@ -96,8 +95,8 @@ class View(AskingView):
             elif choice == "3":
                 self.controller.add_pharmacien()
             elif choice == "4":
-                os.system('clear')
                 self.controller.login_patient()
+                os.system('clear')
             elif choice == "5":
                 exit()
             else:
@@ -127,6 +126,7 @@ class View(AskingView):
                 print("Consultation des traitements à implémenter.")
                 self.patient_menu(patient)
             elif choice == "5":
+                os.system('clear')
                 self.controller.view.main_menu()
             else:
                 print("Choix invalide")
@@ -136,9 +136,11 @@ class View(AskingView):
             exit()
 
     def display_error(self, error_message):
+        os.system('clear')
         print(error_message)
 
     def display_success(self, success_message):
+        os.system('clear')
         print(success_message)
 
     def print_summary(self, title, action, data):
