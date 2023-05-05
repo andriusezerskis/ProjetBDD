@@ -1,14 +1,12 @@
-from gestion_dossier_medical import Database
-from view import View
-# Contrôleur
+from model import Database
+from view import MainView
 
 
 class Controller:
     def __init__(self):
-        self.view = View(self)
-        self.view.main_menu()
         self.db = Database()
-        self.db.clear_database()
+        self.view = MainView(self)
+        self.view.main_menu()
 
     def add_patient(self):
         niss = self.view.ask_niss()
@@ -18,8 +16,8 @@ class Controller:
         date_de_naissance = self.view.ask_date_de_naissance()
         mail = self.view.ask_mail()
         telephone = self.view.ask_telephone()
-        inami_medecin = self.view.ask_inami()
-        inami_pharmacien = self.view.ask_inami()
+        inami_medecin = self.view.ask_inami("médecin")
+        inami_pharmacien = self.view.ask_inami("pharmacien")
         succes = self.db.add_patient(
             niss, nom, prenom, genre, date_de_naissance, mail, telephone, inami_medecin, inami_pharmacien)
         if succes:
@@ -33,7 +31,7 @@ class Controller:
         self.view.main_menu()
 
     def add_medecin(self):
-        inami = self.view.ask_inami()
+        inami = self.view.ask_inami("médecin")
         nom = self.view.ask_nom()
         mail = self.view.ask_mail()
         specialite = self.view.ask_specialite()
@@ -49,7 +47,7 @@ class Controller:
         self.view.main_menu()
 
     def add_pharmacien(self):
-        inami = self.view.ask_inami()
+        inami = self.view.ask_inami("pharmacien")
         nom = self.view.ask_nom()
         mail = self.view.ask_mail()
         telephone = self.view.ask_telephone()
@@ -75,20 +73,20 @@ class Controller:
             self.view.main_menu()
 
     def update_patient_medecin(self, patient):
-        inami_medecin = self.view.ask_inami()
+        inami_medecin = self.view.ask_inami("medecin")
         self.db.update_patient_medecin(patient['NISS'], inami_medecin)
         self.view.display_success("Médecin mis à jour avec succès.")
         patient['inami_medecin'] = inami_medecin
         self.view.print_summary("Patient", "mis(e) à jour", patient)
-        self.view.main_menu()
+        self.view.patient_menu(patient)
 
     def update_patient_pharmacien(self, patient):
-        inami_pharmacien = self.view.ask_inami()
+        inami_pharmacien = self.view.ask_inami("pharmacien")
         self.db.update_patient_pharmacien(patient['NISS'], inami_pharmacien)
         self.view.display_success("Pharmacien mis à jour avec succès.")
         patient['inami_pharmacien'] = inami_pharmacien
         self.view.print_summary("Patient", "mis(e) à jour", patient)
-        self.view.main_menu()
+        self.view.patient_menu(patient)
 
     def view_medical_info(self, patient):
         medical_info = self.db.get_medical_info(patient["NISS"])

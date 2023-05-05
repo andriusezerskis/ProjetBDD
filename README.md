@@ -23,44 +23,25 @@ Suivez les étapes ci-dessous pour créer la base de données :
    3. DROP DATABASE IF EXISTS dossier_medical; # si elle est déjà cree
    4. CREATE DATABASE dossier_medical; 
    5. \q   # Pour quitter
-   6. exit
-   7. cd chemin/dossier/du/dossier
-   8. psql -d dossier_medical -f dossier_medical.sql
-   9. psql -d dossier_medical
-   10. \d   # Vérifie que la base de données est bien créée
-   11. \q
-   12. exit  # Revenir au terminal normal
+   6. cd chemin/dossier/du/dossier
+   7. psql -d dossier_medical -f dossier_medical.sql
+   8. psql -d dossier_medical
+   9. \d   # Vérifie que la base de données est bien créée
+   10. \q
+   11. exit  # Revenir au terminal normal
    ```
 
-## Initialisation de la base de données
+## Gestion de la base de données
 
-1. Ouvrez le fichier `init_all.py` et modifiez la ligne 181 avec vos identifiants PostgreSQL :
+- Pour initialiser la base de données, exécutez les commandes suivantes : ```make init```
 
-   ```python
-   conn = psycopg2.connect(host='localhost', user='votre_user', password='votre_password', dbname='dossier_medical')
-   ```
+- Pour effacer les données de la base de données, exécutez les commandes suivantes : ```make clean```
 
-2. Exécutez le script `init_all.py` :
+- Pour afficher les données de la base de données, exécutez les commandes suivantes : ```make print```
 
-   ```
-   python3 init_all.py
-   ```
+## Lancement de l'application
 
-   Si une erreur survient, vérifiez que la création de la base de données s'est bien passée.
-
-3. Ouvrez le fichier `test_all.py` et modifiez la ligne 14 avec vos identifiants PostgreSQL :
-
-   ```python
-   conn = psycopg2.connect(host='localhost', user='votre_user', password='votre_password', dbname='dossier_medical')
-   ```
-
-4. Exécutez le script `test_all.py` :
-
-   ```
-   python3 test_all.py
-   ```
-
-Assurez-vous de remplacer `votre_user` et `votre_password` par vos identifiants PostgreSQL pour une connexion réussie à la base de données.
+Pour lancer l'application, exécutez les commandes suivantes : ```make```
 
 ## Liens utiles
 
