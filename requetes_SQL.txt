@@ -1,0 +1,12 @@
+1. select nom_commercial from medicament;
+2. /
+3. / qqc avec join
+4. select niss from medicament where nom_commercial="", date_de_vente + duree_traitement ="";
+5. /
+6. /
+7. /
+8. SELECT MAX(y.num)
+  FROM (SELECT COUNT(*) AS num
+          FROM TABLE x) y
+9. /
+10. /
