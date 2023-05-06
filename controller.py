@@ -88,10 +88,18 @@ class Controller:
         self.view.print_summary("Patient", "mis(e) à jour", patient)
         self.view.patient_menu(patient)
 
-    def view_medical_info(self, patient):
+    def medical_info(self, patient):
         medical_info = self.db.get_medical_info(patient["NISS"])
         if medical_info:
             self.view.display_medical_info(medical_info)
         else:
             self.view.display_error("Aucune information médicale trouvée.")
+        self.view.patient_menu(patient)
+    
+    def traitements(self,patient):
+        traitements = self.db.get_traitements(patient["NISS"])
+        if traitements:
+            self.view.display_traitements(traitements)
+        else:
+            self.view.display_error("Aucun traitement trouvé.")
         self.view.patient_menu(patient)
