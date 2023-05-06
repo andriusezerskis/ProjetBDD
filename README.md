@@ -17,19 +17,10 @@ Suivez les étapes ci-dessous pour créer la base de données :
 1. Faites un git clone du projet.
 
 2. Ouvrez le terminal et exécutez les commandes suivantes :
-   ```
-   1. sudo -u postgres -i
-   2. psql
-   3. DROP DATABASE IF EXISTS dossier_medical; # si elle est déjà cree
-   4. CREATE DATABASE dossier_medical; 
-   5. \q   # Pour quitter
-   6. cd chemin/dossier/du/dossier
-   7. psql -d dossier_medical -f dossier_medical.sql
-   8. psql -d dossier_medical
-   9. \d   # Vérifie que la base de données est bien créée
-   10. \q
-   11. exit  # Revenir au terminal normal
-   ```
+   - modifier la varibale ```DB_PATH``` dans ```gestion_db/setup_db.sh```  
+
+   - ```chmod +x `gestion_db/setup_db.sh```  
+   - ```gestion_db/./setup_db.sh```
 
 ## Gestion de la base de données
 
