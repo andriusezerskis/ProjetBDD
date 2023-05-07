@@ -74,6 +74,14 @@ class AskingView:
             return self.ask_mail()
         return mail
 
+    def ask_requete(self):
+        print("1. Requête 1")
+        requete = int(input("Quelle requête voulez-vous exécuter ? "))
+        if requete < 1 or requete > 10:
+            print("Choix invalide")
+            return self.ask_requete()
+        return requete
+
 class MainView(AskingView):
 
     def __init__(self, controller):
@@ -86,7 +94,8 @@ class MainView(AskingView):
             print("2. Ajouter un médecin")
             print("3. Ajouter un pharmacien")
             print("4. Se connecter en tant que patient")
-            print("5. Quitter")
+            print("5. Executer les requêtes")
+            print("6. Quitter")
             choice = input("Que voulez-vous faire ? ")
             if choice == "1":
                 self.controller.add_patient()
@@ -98,6 +107,9 @@ class MainView(AskingView):
                 self.controller.login_patient()
                 os.system('clear')
             elif choice == "5":
+                self.controller.execute_requete()
+                os.system('clear')
+            elif choice == "6":
                 exit()
             else:
                 print("Choix invalide")
@@ -179,3 +191,7 @@ class MainView(AskingView):
         
         headers = ["Nom Pharmacien", "E-mail", "Téléphone"]
         print(tabulate(contact_pharmacien, headers=headers, tablefmt='fancy_grid', colalign=("center", "center", "center")))
+
+    def display_requete(self,filename):
+        os.system('clear')
+        os.system(f"./execute_requete.sh {filename}")

@@ -111,3 +111,20 @@ class Controller:
         else:
             self.view.display_error("Aucune information de contact trouvée.")
         self.view.patient_menu(patient)
+    
+    def execute_requete(self):
+        requete = self.view.ask_requete()
+        switch = {  1: "requete1.sql",
+                    2: "requete2.sql",
+                    3: "requete3.sql",
+                    4: "requete4.sql",
+                    5: "requete5.sql",
+                    6: "requete6.sql",
+                    7: "requete7.sql",
+                    8: "requete8.sql",
+                    9: "requete9.sql",
+                    10: "requete10.sql"
+                }
+        filename = switch[requete]
+        self.view.display_requete(filename)
+        self.view.main_menu()
