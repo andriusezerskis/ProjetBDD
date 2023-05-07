@@ -114,7 +114,8 @@ class MainView(AskingView):
             print("2. Modifier pharmacien de référence")
             print("3. Consulter les informations médicales")
             print("4. Consulter les traitements")
-            print("5. Retour")
+            print("5. Consulter les coordonnées du médecin et du pharmacien")
+            print("6. Retour")
             choice = input("Que voulez-vous faire ? ")
             if choice == "1":
                 self.controller.update_patient_medecin(patient)
@@ -125,6 +126,8 @@ class MainView(AskingView):
             elif choice == "4":
                 self.controller.traitements(patient)
             elif choice == "5":
+                self.controller.contact(patient)
+            elif choice == "6":
                 os.system('clear')
                 self.controller.view.main_menu()
             else:
@@ -153,13 +156,26 @@ class MainView(AskingView):
         os.system('clear')
         print("\nInformations médicales :")
         headers = ["Date du diagnostic", "Nom de la pathologie"]
-        print(tabulate(medical_info, headers=headers, tablefmt='fancy_grid'))
+        print(tabulate(medical_info, headers=headers, tablefmt='fancy_grid',colalign=("center", "center")))
 
-
-    def display_traitements(self, medical_info):
+    def display_traitements(self, traitement):
         os.system('clear')
         print("\nTraitements:")
-        for value in medical_info['traitements']:
-            print(f"{value}")
-            print("\n")
-        print("\n")
+        headers = ["Date d'achat", "Nom du médicament", "Durée du traitement (en jours)"]
+        print(tabulate(traitement, headers=headers, tablefmt='fancy_grid', colalign=("center", "center", "center")))
+
+    def display_contact(self, contact):
+        contact_list = list(contact)
+        for i in range (len(contact_list)):
+            if contact_list[i] == None:
+                contact_list[i] = "Non renseigné"
+        contact_medecin = [tuple(contact_list[0:3])]
+        contact_pharmacien = [tuple(contact_list[3:6])]
+       
+        os.system('clear')
+        print("\nContact:")
+        headers = ["Nom Medecin", "E-mail", "Téléphone"]
+        print(tabulate(contact_medecin, headers=headers, tablefmt='fancy_grid',colalign=("center", "center", "center")))
+        
+        headers = ["Nom Pharmacien", "E-mail", "Téléphone"]
+        print(tabulate(contact_pharmacien, headers=headers, tablefmt='fancy_grid', colalign=("center", "center", "center")))

@@ -103,3 +103,11 @@ class Controller:
         else:
             self.view.display_error("Aucun traitement trouvé.")
         self.view.patient_menu(patient)
+    
+    def contact(self,patient):
+        contact = self.db.get_contact_ref(patient["NISS"])
+        if contact:
+            self.view.display_contact(contact)
+        else:
+            self.view.display_error("Aucune information de contact trouvée.")
+        self.view.patient_menu(patient)

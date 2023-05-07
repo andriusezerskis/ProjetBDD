@@ -87,8 +87,35 @@ class Database:
         return diagnostics_info
     
     def get_traitements(self, NISS_patient):
-        # a implementer plus le temps aha 
-       # traitements_info = cursor.fetchall()
-        return traitements_info
-
+        with self.conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    prescription.date_vente,
+                    medicament.nom_commercial,
+                    prescription.duree_traitement
+                FROM prescription
+                JOIN medicament ON prescription.medicament_id = medicament.id
+                WHERE prescription.NISS_patient = %s;
+            """, (NISS_patient,))
+            traitements_info = cursor.fetchall()
         
+        return traitements_info
+    
+    def get_contact_ref(self, NISS_patient):
+        with self.conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    medecin.nom,
+                    medecin.mail,
+                    medecin.telephone,
+                    pharmacien.nom,
+                    pharmacien.mail,
+                    pharmacien.telephone
+                FROM patient
+                JOIN medecin ON patient.inami_medecin = medecin.inami
+                JOIN pharmacien ON patient.inami_pharmacien = pharmacien.inami
+                WHERE patient.NISS = %s;
+            """ , (NISS_patient,))
+            contact_info = cursor.fetchone()
+        
+        return contact_info

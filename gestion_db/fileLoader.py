@@ -125,9 +125,9 @@ def insert_prescriptions(conn, file_path):
 
         for row in reader:
             NISS_patient, medecin, inami_medecin, pharmacien, inami_pharmacien, medicament_nom_commercial, DCI, date_prescription, date_vente, duree_traitement = row
-            insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, duree_traitement)
+            insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement)
 
-def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, duree_traitement):
+def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement):
     with conn.cursor() as cur:
         # Get medicament_id from medicament_nom_commercial
         cur.execute("SELECT id FROM medicament WHERE nom_commercial = %s", (medicament_nom_commercial,))
@@ -139,8 +139,8 @@ def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, med
             return
 
         cur.execute(
-            "INSERT INTO prescription (NISS_patient, inami_medecin, inami_pharmacien, medicament_id, date_prescription, duree_traitement) VALUES (%s, %s, %s, %s, TO_DATE(%s, 'MM/DD/YYYY'), %s)",
-            (NISS_patient, inami_medecin, inami_pharmacien, medicament_id, date_prescription, duree_traitement)
+            "INSERT INTO prescription (NISS_patient, inami_medecin, inami_pharmacien, medicament_id, date_prescription, date_vente, duree_traitement) VALUES (%s, %s, %s, %s, TO_DATE(%s, 'MM/DD/YYYY'), TO_DATE(%s, 'MM/DD/YYYY'), %s)",
+            (NISS_patient, inami_medecin, inami_pharmacien, medicament_id, date_prescription, date_vente, duree_traitement)
         )
         conn.commit()
 

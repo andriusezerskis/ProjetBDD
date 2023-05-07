@@ -64,6 +64,7 @@ CREATE TABLE prescription (
     medicament_id INT NOT NULL,
     NISS_patient VARCHAR(15) NOT NULL,
     date_prescription DATE NOT NULL,
+    date_vente DATE NOT NULL,
     duree_traitement INT NOT NULL,
     FOREIGN KEY (inami_medecin) REFERENCES medecin(inami),
     FOREIGN KEY (inami_pharmacien) REFERENCES pharmacien(inami),

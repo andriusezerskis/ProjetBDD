@@ -7,7 +7,8 @@ Pour installer PostgreSQL et la librairie psycopg2, exécutez les commandes suiv
 ```
 sudo apt-get update
 sudo apt-get install postgresql postgresql-contrib
-pip install psycopg2
+pip install psycopg2  
+pip install tabulate
 ```
 
 ## Création de la base de données
