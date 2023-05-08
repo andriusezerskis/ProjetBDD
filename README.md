@@ -5,35 +5,27 @@
 Pour installer PostgreSQL et la librairie psycopg2, exécutez les commandes suivantes :
 
 ```
-sudo apt-get update
-sudo apt-get install postgresql postgresql-contrib
+sudo apt-get install postgresql
 pip install psycopg2  
 pip install tabulate
 ```
 
 ## Création de la base de données
 
-Suivez les étapes ci-dessous pour créer la base de données :
+- Pour la création de la base de données, exécutez la commande suivante : ```make setup```
 
-1. Faites un git clone du projet.
-
-2. Ouvrez le terminal et exécutez les commandes suivantes :
-   - modifier la varibale ```DB_PATH``` dans ```gestion_db/setup_db.sh```  
-
-   - ```chmod +x `gestion_db/setup_db.sh```  
-   - ```gestion_db/./setup_db.sh```
 
 ## Gestion de la base de données
 
-- Pour initialiser la base de données, exécutez les commandes suivantes : ```make init```
+- Pour initialiser la base de données, exécutez la commande suivante : ```make init```
 
-- Pour effacer les données de la base de données, exécutez les commandes suivantes : ```make clean```
+- Pour effacer les données de la base de données, exécutez la commande suivante : ```make clean```
 
-- Pour afficher les données de la base de données, exécutez les commandes suivantes : ```make print```
+- Pour afficher les données de la base de données, exécutez la commande suivante : ```make print```
 
 ## Lancement de l'application
 
-Pour lancer l'application, exécutez les commandes suivantes : ```make```
+Pour lancer l'application, exécutez la commande suivante : ```make```
 
 ## Liens utiles
 
