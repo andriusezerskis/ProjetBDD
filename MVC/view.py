@@ -75,7 +75,18 @@ class AskingView:
         return mail
 
     def ask_requete(self):
-        print("1. Requête 1")
+        os.system('clear')
+        print("Exécution des requêtes\n")
+        print(" 1. Requête 1")
+        print(" 2. Requête 2")
+        print(" 3. Requête 3")
+        print(" 4. Requête 4")
+        print(" 5. Requête 5")
+        print(" 6. Requête 6")
+        print(" 7. Requête 7")
+        print(" 8. Requête 8")
+        print(" 9. Requête 9")
+        print("10. Requête 10")
         requete = int(input("Quelle requête voulez-vous exécuter ? "))
         if requete < 1 or requete > 10:
             print("Choix invalide")

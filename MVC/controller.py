@@ -1,5 +1,5 @@
-from model import Database
-from view import MainView
+from MVC.model import Database
+from MVC.view import MainView
 
 
 class Controller:
@@ -114,16 +114,16 @@ class Controller:
     
     def execute_requete(self):
         requete = self.view.ask_requete()
-        switch = {  1: "requete1.sql",
-                    2: "requete2.sql",
-                    3: "requete3.sql",
-                    4: "requete4.sql",
-                    5: "requete5.sql",
-                    6: "requete6.sql",
-                    7: "requete7.sql",
-                    8: "requete8.sql",
-                    9: "requete9.sql",
-                    10: "requete10.sql"
+        switch = {  1: "requete/requete1.sql",
+                    2: "requete/requete2.sql",
+                    3: "requete/requete3.sql",
+                    4: "requete/requete4.sql",
+                    5: "requete/requete5.sql",
+                    6: "requete/requete6.sql",
+                    7: "requete/requete7.sql",
+                    8: "requete/requete8.sql",
+                    9: "requete/requete9.sql",
+                    10: "requete/requete10.sql"
                 }
         filename = switch[requete]
         self.view.display_requete(filename)

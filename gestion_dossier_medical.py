@@ -1,6 +1,6 @@
 
-from controller import Controller
-from view import MainView
+from MVC.controller import Controller
+from MVC.view import MainView
 
 if __name__ == "__main__":
     controller = Controller()
