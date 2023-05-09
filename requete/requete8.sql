@@ -1,6 +1,3 @@
-
-
-
 SELECT
   nom,
   COUNT(nom) AS value_occurrence 
