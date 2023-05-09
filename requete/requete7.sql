@@ -1,4 +1,4 @@
-WITH decade_medications AS (
+WITH decenie_medications AS (
   SELECT
     CASE
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1950 AND 1959 THEN '1950-1959'
@@ -8,30 +8,30 @@ WITH decade_medications AS (
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1990 AND 1999 THEN '1990-1999'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 2000 AND 2009 THEN '2000-2009'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 2010 AND 2020 THEN '2010-2020'
-    END AS decade,
+    END AS decenie,
     medicament.nom_commercial
   FROM prescription
   INNER JOIN patient ON NISS_patient = patient.NISS
   INNER JOIN medicament ON medicament_id = medicament.id
 ),
 
-decade_medications_count AS (
+decenie_medications_count AS (
   SELECT
-    decade,
+    decenie,
     nom_commercial,
     COUNT(*) AS value_occurrence
-  FROM decade_medications
-  GROUP BY decade, nom_commercial
+  FROM decenie_medications
+  GROUP BY decenie, nom_commercial
 )
 
 SELECT
-  dm1.decade,
-  dm1.nom_commercial,
-  dm1.value_occurrence
-FROM decade_medications_count dm1
-WHERE dm1.value_occurrence = (
-  SELECT MAX(dm2.value_occurrence)
-  FROM decade_medications_count dm2
-  WHERE dm2.decade = dm1.decade
+  d_m.decenie,
+  d_m.nom_commercial,
+  d_m.value_occurrence
+FROM decenie_medications_count d_m
+WHERE d_m.value_occurrence = (
+  SELECT MAX(d_m2.value_occurrence)
+  FROM decenie_medications_count d_m2
+  WHERE d_m2.decenie = d_m.decenie
 )
-ORDER BY dm1.decade;
+ORDER BY d_m.decenie;
