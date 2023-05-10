@@ -52,6 +52,8 @@ class Controller:
 
     def add_pharmacien(self):
         inami = self.view.ask_inami("pharmacien")
+        if inami == None:
+            self.view.main_menu()
         nom = self.view.ask_nom()
         mail = self.view.ask_mail()
         telephone = self.view.ask_telephone()

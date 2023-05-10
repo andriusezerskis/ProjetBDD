@@ -14,7 +14,7 @@ class AskingView:
             print("Le NISS doit être composé de 10 à 15 chiffres")
             return self.ask_niss()
         return niss
-
+    
     def ask_nom(self):
         nom = input("Entrez le nom : ")
         if not re.match(r"^[A-Za-z]+$", nom):
@@ -83,19 +83,9 @@ class AskingView:
         return mail
 
     def ask_requete(self):
-        os.system('clear')
-        print("Exécution des requêtes\n")
-        print(" 1. Requête 1")
-        print(" 2. Requête 2")
-        print(" 3. Requête 3")
-        print(" 4. Requête 4")
-        print(" 5. Requête 5")
-        print(" 6. Requête 6")
-        print(" 7. Requête 7")
-        print(" 8. Requête 8")
-        print(" 9. Requête 9")
-        print("10. Requête 10")
-        requete = int(input("Quelle requête voulez-vous exécuter ? "))
+        for i in range(1, 11):
+            print(f"{i}. Requête {i}")
+        requete = int(input("\nQuelle requête voulez-vous exécuter ? "))
         if requete < 1 or requete > 10:
             print("Choix invalide")
             return self.ask_requete()
@@ -120,29 +110,44 @@ class MainView(AskingView):
 
     def __init__(self, controller):
         self.controller = controller
+        
+    def print_title(self, title):
+        print("\n                  " + "=" * len(title))
+        print("                  "+title)
+        print("                  " + "=" * len(title) + "\n")
 
     def main_menu(self):
         try:
-            print("Bienvenue dans le gestionnaire de dossier médical\n")
-            print("1. Ajouter un patient")
-            print("2. Ajouter un médecin")
-            print("3. Ajouter un pharmacien")
-            print("4. Se connecter en tant que patient")
-            print("5. Executer les requêtes")
-            print("6. Quitter")
+            self.print_title("Gestionnaire de dossier médical")
+            print("1. Se connecter en tant que patient")
+            print("2. Executer les requêtes")
+            print("3. Ajouter un patient")
+            print("4. Ajouter un médecin")
+            print("5. Ajouter un pharmacien")
+            print("6. Quitter\n")
             choice = input("Que voulez-vous faire ? ")
             if choice == "1":
-                self.controller.add_patient()
-            elif choice == "2":
-                self.controller.add_medecin()
-            elif choice == "3":
-                self.controller.add_pharmacien()
-            elif choice == "4":
+                os.system('clear')
+                self.print_title("Connexion patient")
                 self.controller.login_patient()
                 os.system('clear')
-            elif choice == "5":
+            elif choice == "2":
+                os.system('clear')
+                self.print_title("Exécution des requêtes")
                 self.controller.execute_requete()
                 os.system('clear')
+            elif choice == "3":
+                os.system('clear')
+                self.print_title("Ajout d'un patient")
+                self.controller.add_patient()
+            elif choice == "4":
+                os.system('clear')
+                self.print_title("Ajout d'un médecin")
+                self.controller.add_medecin()
+            elif choice == "5":
+                os.system('clear')
+                self.print_title("Ajout d'un pharmacien")
+                self.controller.add_pharmacien()
             elif choice == "6":
                 exit()
             else:
@@ -155,7 +160,7 @@ class MainView(AskingView):
     def patient_menu(self, patient):
         try:
             print(f"\nBonjour {patient['nom']} {patient['prenom']}\n")
-            print("Menu patient:")
+            self.print_title("Menu patient")
             print("1. Modifier médecin de référence")
             print("2. Modifier pharmacien de référence")
             print("3. Consulter les informations médicales")
@@ -185,15 +190,17 @@ class MainView(AskingView):
 
     def display_error(self, error_message):
         os.system('clear')
+        self.print_title("Erreur")
         print(error_message)
 
     def display_success(self, success_message):
         os.system('clear')
+        self.print_title("Succès")
         print(success_message)
 
     def print_summary(self, title, action, data):
         os.system('clear')
-        print(f"\n{title} {action} avec succès :")
+        self.print_title(f"{title} {action} avec succès")
         for key, value in data.items():
             print(f"{key}: {value}")
         print("\n")
@@ -230,3 +237,7 @@ class MainView(AskingView):
         os.system('clear')
         os.system(f"cd requete && ./execute_requete.sh {filename}")
         os.system("cd ..")
+
+
+
+
