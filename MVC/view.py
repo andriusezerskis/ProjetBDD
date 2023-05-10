@@ -93,6 +93,15 @@ class AskingView:
             return self.ask_requete()
         return requete
 
+    def ask_date_specifique(self):
+        date = input("Entrez la date (format MM/DD/YYYY) : ")
+        if not re.match(r"^\d{2}/\d{2}/\d{4}$", date):
+            print("La date doit être au format MM/DD/YYYY")
+            return self.ask_date_specifique()
+        return date
+
+        
+
 class MainView(AskingView):
 
     def __init__(self, controller):
@@ -205,4 +214,5 @@ class MainView(AskingView):
 
     def display_requete(self,filename):
         os.system('clear')
-        os.system(f"./execute_requete.sh {filename}")
+        os.system(f"cd requete && ./execute_requete.sh {filename}")
+        os.system("cd ..")

@@ -113,18 +113,10 @@ class Controller:
         self.view.patient_menu(patient)
     
     def execute_requete(self):
-        requete = self.view.ask_requete()
-        switch = {  1: "requete/requete1.sql",
-                    2: "requete/requete2.sql",
-                    3: "requete/requete3.sql",
-                    4: "requete/requete4.sql",
-                    5: "requete/requete5.sql",
-                    6: "requete/requete6.sql",
-                    7: "requete/requete7.sql",
-                    8: "requete/requete8.sql",
-                    9: "requete/requete9.sql",
-                    10: "requete/requete10.sql"
-                }
-        filename = switch[requete]
+        num = self.view.ask_requete()
+        filename = "requete" + str(num) + ".sql"
+        if num == 10:
+            date = self.view.ask_date_specifique()
+            filename = filename.replace("requete10.sql", "requete10.sql " + date)
         self.view.display_requete(filename)
         self.view.main_menu()
