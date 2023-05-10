@@ -1,5 +1,5 @@
 SELECT
-  patient.nom,
+patient.nom,
   COUNT( DISTINCT prescription.inami_medecin) AS value_occurrence 
 
 FROM prescription
