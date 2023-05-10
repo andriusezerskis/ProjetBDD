@@ -6,6 +6,10 @@ class AskingView:
 
     def ask_niss(self):
         niss = input("Entrez le NISS du patient : ")
+        if not niss:
+            os.system('clear')
+            print("Le NISS ne peut pas être vide")
+            return None
         if not re.match(r"^\d{10,15}$", niss):
             print("Le NISS doit être composé de 10 à 15 chiffres")
             return self.ask_niss()
@@ -42,6 +46,10 @@ class AskingView:
 
     def ask_inami(self, profession):
         inami = input(f"Entrez le numéro INAMI du {profession} : ")
+        if not inami:
+            os.system('clear')
+            print("Le numéro INAMI ne peut pas être vide")
+            return None
         if not re.match(r"^\d{9,15}$", inami):
             print("Le numéro INAMI doit être composé de 9 à 15 chiffres")
             return self.ask_inami(profession)
@@ -99,7 +107,13 @@ class AskingView:
             print("La date doit être au format MM/DD/YYYY")
             return self.ask_date_specifique()
         return date
-
+    
+    def ask_nom_medicament(self):
+        nom_med = input("Entrez le nom du médicament : ")
+        if not re.match(r"^[A-Za-zÀ-ÿ\s]+$", nom_med):
+            print("Le nom du médicament ne peut contenir que des lettres")
+            return self.ask_nom_medicament()
+        return nom_med
         
 
 class MainView(AskingView):

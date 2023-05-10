@@ -10,6 +10,8 @@ class Controller:
 
     def add_patient(self):
         niss = self.view.ask_niss()
+        if niss == None:
+            self.view.main_menu()
         nom = self.view.ask_nom()
         prenom = self.view.ask_prenom()
         genre = self.view.ask_genre()
@@ -32,6 +34,8 @@ class Controller:
 
     def add_medecin(self):
         inami = self.view.ask_inami("médecin")
+        if inami == None:
+            self.view.main_menu()
         nom = self.view.ask_nom()
         mail = self.view.ask_mail()
         specialite = self.view.ask_specialite()
@@ -64,6 +68,8 @@ class Controller:
 
     def login_patient(self):
         niss = self.view.ask_niss()
+        if niss == None:
+            self.view.main_menu()
         date_de_naissance = self.view.ask_date_de_naissance()
         patient = self.db.get_patient(niss, date_de_naissance)
         if patient:
@@ -118,5 +124,9 @@ class Controller:
         if num == 10:
             date = self.view.ask_date_specifique()
             filename = filename.replace("requete10.sql", "requete10.sql " + date)
+        elif num == 4:
+            date = self.view.ask_date_specifique()
+            nom_medicament = self.view.ask_nom_medicament()
+            filename = filename.replace("requete4.sql", "requete4.sql " + date + " " + nom_medicament)
         self.view.display_requete(filename)
         self.view.main_menu()
