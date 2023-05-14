@@ -15,7 +15,16 @@ def open_file(conn, file_path, node_name):
 def get_pathologie_id(conn, pathologie_nom):
     with conn.cursor() as cur:
         cur.execute(
-            "SELECT id FROM pathologie WHERE nom = %s", (pathologie_nom,)
+            "SELECT id_pathologie FROM pathologie WHERE nom = %s", (pathologie_nom,)
+        )
+        result = cur.fetchone()
+        return result[0] if result else None
+    
+
+def get_specialite_id(conn, specialite_nom):
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT id_specialite FROM specialite WHERE nom = %s", (specialite_nom,)
         )
         result = cur.fetchone()
         return result[0] if result else None
@@ -50,13 +59,13 @@ def insert_medecins(conn,file_path, node_name):
         inami = get_text(medecin.find('inami'))
         mail = get_text(medecin.find('mail'))
         nom = get_text(medecin.find('nom'))
-        specialite = get_text(medecin.find('specialite'))
+        specialite_id = get_specialite_id(conn, get_text(medecin.find('specialite')))
         telephone = get_text(medecin.find('telephone'))
         
 
-        sql = """INSERT INTO medecin (inami, nom, mail, specialite, telephone)
+        sql = """INSERT INTO medecin (inami, nom, mail, id_specialite, telephone)
                 VALUES (%s, %s, %s, %s, %s)"""
-        cursor.execute(sql, (inami, nom, mail, specialite, telephone))
+        cursor.execute(sql, (inami, nom, mail, specialite_id, telephone))
 
     conn.commit()
     cursor.close()
@@ -84,15 +93,17 @@ def insert_specialites(conn, file_path, node_name):
 
     for specialite in root.findall('specialite'):
         name = get_text(specialite.find('name'))
+        query = "INSERT INTO specialite (nom) VALUES (%s) ON CONFLICT(nom) DO NOTHING;"
+        cursor.execute(query, (name,))
+        
         medicaments = specialite.findall('medicament')  # Pas besoin d'utiliser get_text ici
-        medicament_systeme_anatomique = ''
         for medicament in medicaments:
-            medicament_systeme_anatomique += get_text(medicament) + ';'  # Utilisez get_text pour lire le texte de chaque élément medicament
-        # Supprime le dernier ';'
-        medicament_systeme_anatomique = medicament_systeme_anatomique[:-1]
+            query = "INSERT INTO systeme_anatomique (nom) VALUES (%s) ON CONFLICT(nom) DO NOTHING;"
+            cursor.execute(query, (get_text(medicament),))
+            query = "INSERT INTO specialite_systeme_anatomique (id_specialite, id_systeme_anatomique) SELECT s.id_specialite, sa.id_systeme_anatomique FROM specialite s, systeme_anatomique sa where s.nom=%s and sa.nom=%s"
+            cursor.execute(query, (name, get_text(medicament)))
 
-        query = "INSERT INTO specialite (name, medicament_systeme_anatomique) VALUES (%s, %s);"
-        cursor.execute(query, (name, medicament_systeme_anatomique))
+
 
     conn.commit()
     cursor.close()
@@ -108,7 +119,7 @@ def insert_diagnostics(conn,file_path, node_name):
 
         pathologie_id = get_pathologie_id(conn, pathologie_nom)
         if pathologie_id is not None:
-            sql = """INSERT INTO diagnostic (NISS_patient, date_diagnostic, pathologie_id)
+            sql = """INSERT INTO diagnostique (NISS_patient, date_diagnostic, id_pathologie)
                     VALUES (%s, TO_DATE(%s, 'MM/DD/YYYY'), %s)"""
             cursor.execute(sql, (NISS_patient, date_diagnostic, pathologie_id))
             
@@ -130,7 +141,7 @@ def insert_prescriptions(conn, file_path):
 def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement):
     with conn.cursor() as cur:
         # Get medicament_id from medicament_nom_commercial
-        cur.execute("SELECT id FROM medicament WHERE nom_commercial = %s", (medicament_nom_commercial,))
+        cur.execute("SELECT id_medicament FROM medicament_conditionnement WHERE nom_commercial = %s", (medicament_nom_commercial,))
         medicament_id = cur.fetchone()
         if medicament_id:
             medicament_id = medicament_id[0]
@@ -139,7 +150,7 @@ def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, med
             return
 
         cur.execute(
-            "INSERT INTO prescription (NISS_patient, inami_medecin, inami_pharmacien, medicament_id, date_prescription, date_vente, duree_traitement) VALUES (%s, %s, %s, %s, TO_DATE(%s, 'MM/DD/YYYY'), TO_DATE(%s, 'MM/DD/YYYY'), %s)",
+            "INSERT INTO prescription (NISS_patient, inami_medecin, inami_pharmacien, id_medicament, date_prescription, date_vente, duree_traitement) VALUES (%s, %s, %s, %s, TO_DATE(%s, 'MM/DD/YYYY'), TO_DATE(%s, 'MM/DD/YYYY'), %s)",
             (NISS_patient, inami_medecin, inami_pharmacien, medicament_id, date_prescription, date_vente, duree_traitement)
         )
         conn.commit()
@@ -147,27 +158,42 @@ def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, med
 def insert_pathologies(conn, file_path):
     with open(file_path, 'r', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
-        for row in reader:
-            nom, systeme_anatomique = row
-            with conn.cursor() as cur:
+        with conn.cursor() as cur:
+            for row in reader:
+                nom, specialite = row
                 cur.execute(
-                    "INSERT INTO pathologie (nom, systeme_anatomique) VALUES (%s, %s)",
-                    (nom, systeme_anatomique)
+                    "INSERT INTO specialite (nom) VALUES (%s) ON CONFLICT (nom) DO NOTHING",
+                    (specialite,)
                 )
-                conn.commit()
+                cur.execute(
+                    "INSERT INTO pathologie (nom) VALUES (%s) ON CONFLICT (nom) DO NOTHING", (nom,)
+                )
+                cur.execute("INSERT INTO pathologie_specialite (id_pathologie, id_specialite) SELECT p.id_pathologie, s.id_specialite from pathologie p, specialite s where p.nom=%s and s.nom=%s ON CONFLICT (id_pathologie, id_specialite) DO NOTHING",
+                            (nom, specialite)
+                            )
+
+        conn.commit()
 
 def insert_medicaments(conn, file_path):
     with open(file_path, 'r', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         next(reader)  # Skip header line
-        for row in reader:
-            dci, nom_commercial, systeme_anatomique, conditionnement = row
-            with conn.cursor() as cur:
+        with conn.cursor() as cur:
+            for row in reader:
+                dci, nom_commercial, systeme_anatomique, conditionnement = row
                 cur.execute(
-                    "INSERT INTO medicament (dci, nom_commercial, systeme_anatomique, conditionnement) VALUES (%s, %s, %s, %s)",
-                    (dci, nom_commercial, systeme_anatomique, conditionnement)
+                    "INSERT INTO systeme_anatomique (nom) VALUES (%s) ON CONFLICT (nom) DO NOTHING",
+                    (systeme_anatomique,)
                 )
-                conn.commit()
+                cur.execute(
+                    "INSERT INTO medicament (dci, id_systeme_anatomique) SELECT %s, id_systeme_anatomique from systeme_anatomique s where s.nom=%s ON CONFLICT (dci) DO NOTHING",
+                    (dci, systeme_anatomique)
+                )
+                cur.execute(
+                    "INSERT INTO medicament_conditionnement (id_medicament, nom_commercial, conditionnement) SELECT id_medicament, %s, %s from medicament where dci=%s ON CONFLICT(id_medicament, nom_commercial, conditionnement) DO NOTHING",
+                    (nom_commercial, conditionnement, dci) 
+                )
+        conn.commit()
 
 def get_text(element):
     if element is not None and element.text is not None and element.text.strip() != '':

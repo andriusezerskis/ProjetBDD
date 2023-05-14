@@ -9,10 +9,12 @@ WITH decenie_medications AS (
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 2000 AND 2009 THEN '2000-2009'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 2010 AND 2020 THEN '2010-2020'
     END AS decenie,
-    medicament.nom_commercial
+    medicament_conditionnement.nom_commercial
   FROM prescription
   INNER JOIN patient ON NISS_patient = patient.NISS
-  INNER JOIN medicament ON medicament_id = medicament.id
+  INNER JOIN medicament ON prescription.id_medicament = medicament.id_medicament
+  INNER JOIN medicament_conditionnement ON medicament_conditionnement.id_medicament = medicament.id_medicament
+
 ),
 
 decenie_medications_count AS (
