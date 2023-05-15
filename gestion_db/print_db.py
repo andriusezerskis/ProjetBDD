@@ -18,7 +18,7 @@ def main():
     print_table_data(conn, 'pharmacien')
     print_table_data(conn, 'pathologie')
     print_table_data(conn, 'medicament')
-    print_table_data(conn, 'diagnostic')
+    print_table_data(conn, 'diagnostique')
     print_table_data(conn, 'prescription')
     print_table_data(conn, 'specialite')
     

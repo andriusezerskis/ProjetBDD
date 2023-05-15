@@ -9,7 +9,7 @@ def clear_database():
             dbname='dossier_medical')
     
     tables = ['patient', 'medecin', 'pharmacien', 'pathologie',
-                'medicament', 'diagnostic', 'prescription', 'specialite']
+                'medicament', 'diagnostique', 'prescription', 'specialite']
     with conn.cursor() as cursor:
         for table_name in tables:
             cursor.execute(f'TRUNCATE {table_name} CASCADE')
