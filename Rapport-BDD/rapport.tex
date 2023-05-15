@@ -1,0 +1,87 @@
+\documentclass[utf8]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[parfill]{parskip}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listingsutf8}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage{lipsum}
+\DeclareMathSizes{10}{10}{9}{5}
+
+\nocite{*}
+\setlength\parindent{24pt}
+
+\begin{document}
+\begin{titlepage}
+  \centering
+  {\scshape\LARGE Université Libre de Bruxelles \par}
+  \vspace{1cm}
+  {\scshape\Large INFO-H303\par}
+  \vspace{1.5cm}
+
+  \noindent\rule{15cm}{0.4pt}
+  \newline
+  {\huge\bfseries Bases De Données\par}
+  \vspace{0.5cm}
+  {\scshape\Large Projet \par}
+  \vspace{0.5cm}
+  {\scshape\Large Dossier Patient Informatisé\par}
+  \vspace{0.5cm}
+  \noindent\rule{15cm}{0.4pt}
+  \vfill
+
+  % Bottom of the page
+  {\Large\scshape Nieto Navarrete Matias , }
+  {\Large\scshape 502920\par}
+  {\Large\scshape Vanderslagmolen Moïra , }
+  {\Large\scshape 547486\par}
+  {\Large\scshape Ežerskis Andrius , }
+  {\Large\scshape 542698\par}
+  \vspace{0.5cm}
+  {\Large\scshape B-INFO\par}
+  \vspace{1cm}
+  {\large Avril 2023\par}
+\end{titlepage}
+\tableofcontents
+\newpage
+
+\section{Extraction des données}
+
+\section{Requêtes demandées}
+
+\subsection{Algèbre Relationnelle}
+\subsubsection{Requête 1}
+\begin{enumerate}
+  \item $temp1 \leftarrow (medicament \times medicament\_conditionnement)$
+  \item $temp2 \leftarrow \sigma_{medicament\_conditionnement.id\_medicament = medicament.id\_medicament}(temp1)$
+  \item $\Pi_{dci, nom\_commercial, conditionnement} (temp2)$
+\end{enumerate}
+
+\subsubsection{Requête 2}
+
+\subsubsection{Requête 3}
+\begin{enumerate}
+  \item $temp1 \leftarrow   (medecin \bowtie_{medecin.inami = p.inami\_medecin} (prescription))$
+  \item $temp2 \leftarrow (temp1 \bowtie_{p.id\_medicament = med.id\_medicament}(medicament))$
+  \item $temp3 \leftarrow (temp2 \bowtie_{m.id\_specialite = s.id\_specialite}(specialite))$
+  \item $temp4 \leftarrow (temp3 \bowtie_{med.id\_systeme\_anatomique = sa.id\_systeme\_anatomique}(systeme\_anatomique))$
+  \item $temp5 \leftarrow (temp4 \bowtie_{ssa.id\_specialite = s.id\_specialite and med.id\_systeme\_anatomique = ssa.id\_systeme\_anatomique}(specialite\_systeme\_anatomique))$
+  \item $\Pi_{nom} (temp 5)$
+\end{enumerate}
+
+\subsubsection{Requête 6}
+\subsubsection{Requête 7}
+\subsubsection{Requête 8}
+\subsubsection{Requête 9}
+\subsubsection{Requête 10}
+
+\section{}
+
+
+\end{document}
