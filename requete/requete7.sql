@@ -7,16 +7,15 @@ WITH decenie_medications AS (
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1980 AND 1989 THEN '1980-1989'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1990 AND 1999 THEN '1990-1999'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 2000 AND 2009 THEN '2000-2009'
-      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 2010 AND 2020 THEN '2010-2020'
+      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 2010 AND 2019 THEN '2010-2019'
+      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 2020 AND 2029 THEN '2020-2029'
     END AS decenie,
     medicament_conditionnement.nom_commercial
   FROM prescription
   INNER JOIN patient ON NISS_patient = patient.NISS
   INNER JOIN medicament ON prescription.id_medicament = medicament.id_medicament
   INNER JOIN medicament_conditionnement ON medicament_conditionnement.id_medicament = medicament.id_medicament
-
 ),
-
 decenie_medications_count AS (
   SELECT
     decenie,
@@ -24,16 +23,19 @@ decenie_medications_count AS (
     COUNT(*) AS value_occurrence
   FROM decenie_medications
   GROUP BY decenie, nom_commercial
+),
+max_medications_per_decenie AS (
+  SELECT
+    decenie,
+    MAX(value_occurrence) AS max_value_occurrence
+  FROM decenie_medications_count
+  GROUP BY decenie
 )
-
 SELECT
   d_m.decenie,
-  d_m.nom_commercial,
+  string_agg(d_m.nom_commercial, ', ') AS medecin_list,
   d_m.value_occurrence
 FROM decenie_medications_count d_m
-WHERE d_m.value_occurrence = (
-  SELECT MAX(d_m2.value_occurrence)
-  FROM decenie_medications_count d_m2
-  WHERE d_m2.decenie = d_m.decenie
-)
+JOIN max_medications_per_decenie m_m_p_d ON d_m.decenie = m_m_p_d.decenie AND d_m.value_occurrence = m_m_p_d.max_value_occurrence
+GROUP BY d_m.decenie, d_m.value_occurrence
 ORDER BY d_m.decenie;

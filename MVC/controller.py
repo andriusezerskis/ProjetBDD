@@ -133,5 +133,8 @@ class Controller:
             date = self.view.ask_date_specifique()
             nom_medicament = self.view.ask_nom_medicament()
             filename = filename.replace("requete4.sql", "requete4.sql " + date + " " + nom_medicament)
+        elif num == 5:
+            dci = self.view.ask_dci()
+            filename = filename.replace("requete5.sql", "requete5.sql " + dci)
         self.view.display_requete(filename)
         self.execute_requete()

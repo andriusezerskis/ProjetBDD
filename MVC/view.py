@@ -83,6 +83,7 @@ class AskingView:
         return mail
 
     def ask_requete(self):
+        self.print_title("Exécution des requêtes")
         for i in range(1, 11):
             if i < 10:
                 print(f"{i}.  Requête {i}")
@@ -105,8 +106,6 @@ class AskingView:
                 except ValueError:
                     print("Choix invalide")
 
-
-
     def ask_date_specifique(self):
         date = input("Entrez la date (format MM/DD/YYYY) : ")
         if not re.match(r"^\d{2}/\d{2}/\d{4}$", date):
@@ -120,6 +119,13 @@ class AskingView:
             print("Le nom du médicament ne peut contenir que des lettres")
             return self.ask_nom_medicament()
         return nom_med
+    
+    def ask_dci(self):
+        dci = input("Entrez la DCI : ")
+        if not re.match(r"^[A-Za-zÀ-ÿ\s]+$", dci):
+            print("La DCI ne peut contenir que des lettres")
+            return self.ask_dci()
+        return dci
         
 
 class MainView(AskingView):
@@ -149,7 +155,6 @@ class MainView(AskingView):
                 self.clean()
             elif choice == "2":
                 self.clean()
-                self.print_title("Exécution des requêtes")
                 self.controller.execute_requete()
                 self.clean()
             elif choice == "3":

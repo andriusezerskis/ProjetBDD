@@ -13,5 +13,5 @@ WHERE medicament.id_medicament NOT IN (
   WHERE date_prescription >= DATE 'YOUR_DATE'
 )
 GROUP BY  medicament_conditionnement.nom_commercial, medicament.dci
-HAVING MAX(prescription.date_prescription) IS NOT NULL
+-- HAVING MAX(prescription.date_prescription) IS NOT NULL -- suprimme les medicaments qui n'ont jamais ete prescrit
 ORDER BY medicament_conditionnement.nom_commercial;

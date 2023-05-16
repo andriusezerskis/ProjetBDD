@@ -36,6 +36,16 @@ elif [ "$REQUETE_FILE" == "requete4.sql" ]; then
     sed "s/'YOUR_DATE'/$QUOTED_ESCAPED_DATE_INPUT/g; s/'YOUR_MEDICAMENT'/$QUOTED_MEDICAMENT_NAME/g" $REQUETE_FILE > temp_requete4.sql
     sudo -u postgres psql -d $DATABASE -f temp_requete4.sql
     rm temp_requete4.sql
+elif [ "$REQUETE_FILE" == "requete5.sql" ]; then
+    if [ $# -ne 2 ]; then
+        echo "Usage: $0 requete5.sql [DCI]"
+        exit 1
+    fi
+    DCI=$2
+    QUOTED_DCI="'$DCI'"
+    sed "s/'YOUR_DCI'/$QUOTED_DCI/g" $REQUETE_FILE > temp_requete5.sql
+    sudo -u postgres psql -d $DATABASE -f temp_requete5.sql
+    rm temp_requete5.sql
 else
     sudo -u postgres psql -d $DATABASE -f $REQUETE_FILE
 fi
