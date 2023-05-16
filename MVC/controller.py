@@ -66,7 +66,6 @@ class Controller:
             self.view.display_error(
                 "Un pharmacien avec ce numéro INAMI existe déjà.")
         self.view.main_menu()
-        self.view.main_menu()
 
     def login_patient(self):
         niss = self.view.ask_niss()
@@ -122,6 +121,10 @@ class Controller:
     
     def execute_requete(self):
         num = self.view.ask_requete()
+        if num == 11:
+            self.view.clean()
+            self.view.main_menu()
+            return 
         filename = "requete" + str(num) + ".sql"
         if num == 10:
             date = self.view.ask_date_specifique()
@@ -131,4 +134,4 @@ class Controller:
             nom_medicament = self.view.ask_nom_medicament()
             filename = filename.replace("requete4.sql", "requete4.sql " + date + " " + nom_medicament)
         self.view.display_requete(filename)
-        self.view.main_menu()
+        self.execute_requete()

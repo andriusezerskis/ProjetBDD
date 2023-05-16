@@ -7,7 +7,7 @@ class AskingView:
     def ask_niss(self):
         niss = input("Entrez le NISS du patient : ")
         if not niss:
-            os.system('clear')
+            self.clean()
             print("Le NISS ne peut pas être vide")
             return None
         if not re.match(r"^\d{10,15}$", niss):
@@ -47,7 +47,7 @@ class AskingView:
     def ask_inami(self, profession):
         inami = input(f"Entrez le numéro INAMI du {profession} : ")
         if not inami:
-            os.system('clear')
+            self.clean()
             print("Le numéro INAMI ne peut pas être vide")
             return None
         if not re.match(r"^\d{9,15}$", inami):
@@ -84,12 +84,28 @@ class AskingView:
 
     def ask_requete(self):
         for i in range(1, 11):
-            print(f"{i}. Requête {i}")
-        requete = int(input("\nQuelle requête voulez-vous exécuter ? "))
-        if requete < 1 or requete > 10:
-            print("Choix invalide")
-            return self.ask_requete()
-        return requete
+            if i < 10:
+                print(f"{i}.  Requête {i}")
+            else:
+                print(f"{i}. Requête {i}")
+        print("11. Retour au menu principal")
+        
+        while True:
+            requete_str = input("\nQuelle requête voulez-vous exécuter ? ")
+            
+            if requete_str.strip() == "":
+                print("Choix invalide")
+            else:
+                try:
+                    requete = int(requete_str)
+                    if requete < 1 or requete > 11:
+                        print("Choix invalide")
+                    else:
+                        return requete
+                except ValueError:
+                    print("Choix invalide")
+
+
 
     def ask_date_specifique(self):
         date = input("Entrez la date (format MM/DD/YYYY) : ")
@@ -127,25 +143,25 @@ class MainView(AskingView):
             print("6. Quitter\n")
             choice = input("Que voulez-vous faire ? ")
             if choice == "1":
-                os.system('clear')
+                self.clean()
                 self.print_title("Connexion patient")
                 self.controller.login_patient()
-                os.system('clear')
+                self.clean()
             elif choice == "2":
-                os.system('clear')
+                self.clean()
                 self.print_title("Exécution des requêtes")
                 self.controller.execute_requete()
-                os.system('clear')
+                self.clean()
             elif choice == "3":
-                os.system('clear')
+                self.clean()
                 self.print_title("Ajout d'un patient")
                 self.controller.add_patient()
             elif choice == "4":
-                os.system('clear')
+                self.clean()
                 self.print_title("Ajout d'un médecin")
                 self.controller.add_medecin()
             elif choice == "5":
-                os.system('clear')
+                self.clean()
                 self.print_title("Ajout d'un pharmacien")
                 self.controller.add_pharmacien()
             elif choice == "6":
@@ -179,7 +195,7 @@ class MainView(AskingView):
             elif choice == "5":
                 self.controller.contact(patient)
             elif choice == "6":
-                os.system('clear')
+                self.clean()
                 self.controller.view.main_menu()
             else:
                 print("Choix invalide")
@@ -189,30 +205,28 @@ class MainView(AskingView):
             exit()
 
     def display_error(self, error_message):
-        os.system('clear')
-        self.print_title("Erreur")
-        print(error_message)
+        self.clean()
+        print("Erreur : " + error_message)
 
     def display_success(self, success_message):
-        os.system('clear')
-        self.print_title("Succès")
+        self.clean()
         print(success_message)
 
     def print_summary(self, title, action, data):
-        os.system('clear')
-        self.print_title(f"{title} {action} avec succès")
+        self.clean()
+        print(f"{title} {action} avec succès")
         for key, value in data.items():
             print(f"{key}: {value}")
         print("\n")
 
     def display_medical_info(self, medical_info):
-        os.system('clear')
+        self.clean()
         print("\nInformations médicales :")
         headers = ["Date du diagnostic", "Nom de la pathologie"]
         print(tabulate(medical_info, headers=headers, tablefmt='fancy_grid',colalign=("center", "center")))
 
     def display_traitements(self, traitement):
-        os.system('clear')
+        self.clean()
         print("\nTraitements:")
         headers = ["Date d'achat", "Nom du médicament", "Durée du traitement (en jours)"]
         print(tabulate(traitement, headers=headers, tablefmt='fancy_grid', colalign=("center", "center", "center")))
@@ -225,7 +239,7 @@ class MainView(AskingView):
         contact_medecin = [tuple(contact_list[0:3])]
         contact_pharmacien = [tuple(contact_list[3:6])]
        
-        os.system('clear')
+        self.clean()
         print("\nContact:")
         headers = ["Nom Medecin", "E-mail", "Téléphone"]
         print(tabulate(contact_medecin, headers=headers, tablefmt='fancy_grid',colalign=("center", "center", "center")))
@@ -234,9 +248,12 @@ class MainView(AskingView):
         print(tabulate(contact_pharmacien, headers=headers, tablefmt='fancy_grid', colalign=("center", "center", "center")))
 
     def display_requete(self,filename):
-        os.system('clear')
+        self.clean()
         os.system(f"cd requete && ./execute_requete.sh {filename}")
         os.system("cd ..")
+    
+    def clean(self):
+        os.system('clear')
 
 
 

@@ -5,6 +5,7 @@ def main():
 
     conn = psycopg2.connect(host='localhost', user='postgres',
                             password='azertyuiop', dbname='dossier_medical')
+    
 
     file_path = 'data/pathologies.csv'
     insert_pathologies(conn, file_path)
