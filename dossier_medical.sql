@@ -55,7 +55,7 @@ CREATE TABLE pathologie (
    );
 create unique index uk_pathologie on pathologie (nom);
 
-
+-- Création de la table 'pathologie_specialite'
 CREATE TABLE pathologie_specialite (
     id_pathologie int NOT NULL,
     id_specialite int NOT NULL,
@@ -104,7 +104,7 @@ CREATE TABLE prescription (
 );
 
 
-
+-- Création de la table 'specialite_systeme_anatomique'
 CREATE TABLE specialite_systeme_anatomique (
     id_specialite int not null,
     id_systeme_anatomique int not null,
