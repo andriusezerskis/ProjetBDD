@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 import csv
+from io import StringIO
 
 
 def open_file(conn, file_path, node_name):
@@ -29,27 +30,40 @@ def get_specialite_id(conn, specialite_nom):
         result = cur.fetchone()
         return result[0] if result else None
 
-def insert_patients(conn,file_path, node_name):
-    
-    root, cursor = open_file(conn, file_path, node_name)
+def insert_patients(conn, file_path):
+    with open(file_path, 'r') as f:
+        content = '<root>' + f.read() + '</root>'
+        root = ET.parse(StringIO(content)).getroot()
 
-    for patient in root.findall('patient'):
-        niss = get_text(patient.find('NISS'))
-        date_de_naissance = get_text(patient.find('date_de_naissance'))
-        genre = int(get_text(patient.find('genre')))
-        inami_medecin = get_text(patient.find('inami_medecin'))
-        inami_pharmacien = get_text(patient.find('inami_pharmacien'))
-        mail = get_text(patient.find('mail'))
-        nom = get_text(patient.find('nom'))
-        prenom = get_text(patient.find('prenom'))
-        telephone = get_text(patient.find('telephone'))
-
-        sql = """INSERT INTO patient (NISS, nom, prenom, genre, date_de_naissance, mail, telephone, inami_medecin, inami_pharmacien)
-                 VALUES (%s, %s, %s, %s, TO_DATE(%s, 'MM/DD/YYYY'), %s, %s, %s, %s)"""
-        cursor.execute(sql, (niss, nom, prenom, genre, date_de_naissance, mail, telephone, inami_medecin, inami_pharmacien))
-
-    conn.commit()
-    cursor.close()
+        cur = conn.cursor()
+        for child in root:
+            if child.tag == 'NISS':
+                NISS = child.text
+            elif child.tag == 'nom':
+                nom = child.text
+            elif child.tag == 'prenom':
+                prenom = child.text
+            elif child.tag == 'genre':
+                genre = int(child.text)
+            elif child.tag == 'date_de_naissance':
+                date_de_naissance = child.text
+            elif child.tag == 'mail':
+                mail = child.text
+            elif child.tag == 'telephone':
+                telephone = child.text
+            elif child.tag == 'inami_medecin':
+                inami_medecin = child.text
+            elif child.tag == 'inami_pharmacien':
+                inami_pharmacien = child.text
+                
+            if child.tag == 'telephone': 
+                cur.execute(
+                    "INSERT INTO patient VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    (NISS, nom, prenom, genre, date_de_naissance, mail, telephone, inami_medecin, inami_pharmacien)
+                )
+        conn.commit()
+        cur.close()
+        
 
 def insert_medecins(conn,file_path, node_name):
     
