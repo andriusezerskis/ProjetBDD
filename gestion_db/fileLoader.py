@@ -141,7 +141,7 @@ def insert_prescriptions(conn, file_path):
 def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement):
     with conn.cursor() as cur:
         # Get medicament_id from medicament_nom_commercial
-        cur.execute("SELECT id_medicament FROM medicament_conditionnement WHERE nom_commercial = %s", (medicament_nom_commercial,))
+        cur.execute("SELECT id_medicament FROM medicament WHERE nom_commercial = %s", (medicament_nom_commercial,))
         medicament_id = cur.fetchone()
         if medicament_id:
             medicament_id = medicament_id[0]
@@ -154,6 +154,7 @@ def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, med
             (NISS_patient, inami_medecin, inami_pharmacien, medicament_id, date_prescription, date_vente, duree_traitement)
         )
         conn.commit()
+
 
 def insert_pathologies(conn, file_path):
     with open(file_path, 'r', encoding='utf-8') as csvfile:
@@ -186,14 +187,17 @@ def insert_medicaments(conn, file_path):
                     (systeme_anatomique,)
                 )
                 cur.execute(
-                    "INSERT INTO medicament (dci, id_systeme_anatomique) SELECT %s, id_systeme_anatomique from systeme_anatomique s where s.nom=%s ON CONFLICT (dci) DO NOTHING",
-                    (dci, systeme_anatomique)
-                )
-                cur.execute(
-                    "INSERT INTO medicament_conditionnement (id_medicament, nom_commercial, conditionnement) SELECT id_medicament, %s, %s from medicament where dci=%s ON CONFLICT(id_medicament, nom_commercial, conditionnement) DO NOTHING",
-                    (nom_commercial, conditionnement, dci) 
+                    """
+                    INSERT INTO medicament (dci, id_systeme_anatomique, nom_commercial, conditionnement) 
+                    SELECT %s, id_systeme_anatomique, %s, %s 
+                    FROM systeme_anatomique 
+                    WHERE nom = %s
+                    ON CONFLICT (dci, nom_commercial, conditionnement) DO NOTHING
+                    """, 
+                    (dci, nom_commercial, conditionnement, systeme_anatomique)
                 )
         conn.commit()
+
 
 def get_text(element):
     if element is not None and element.text is not None and element.text.strip() != '':

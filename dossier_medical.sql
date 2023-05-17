@@ -4,7 +4,6 @@ CREATE TABLE specialite (
     id_specialite SERIAL PRIMARY KEY,
     nom VARCHAR(50) NOT NULL
 );
-
 create unique index uk_specialite on specialite(nom);
 
 
@@ -13,10 +12,7 @@ CREATE TABLE systeme_anatomique
     id_systeme_anatomique serial PRIMARY key,
     nom varchar(50) NOT NULL
 );
-
-
 create unique index uk_systeme_anatomique on systeme_anatomique (nom);
-
 
 
 -- Création de la table 'patient'
@@ -52,14 +48,11 @@ CREATE TABLE pharmacien (
 );
 
 
-
 -- Création de la table 'pathologie'
 CREATE TABLE pathologie (
     id_pathologie SERIAL PRIMARY KEY,
     nom VARCHAR(100) NOT NULL
    );
-
-
 create unique index uk_pathologie on pathologie (nom);
 
 
@@ -69,14 +62,7 @@ CREATE TABLE pathologie_specialite (
     FOREIGN KEY (id_pathologie) REFERENCES pathologie(id_pathologie),
     FOREIGN KEY (id_specialite) REFERENCES specialite(id_specialite)
 );
-
-
-
 create unique index uk_pathologie_specialite on pathologie_specialite (id_pathologie, id_specialite);
-
-
-
-
 
 
 -- Création de la table 'medicament'
@@ -84,22 +70,11 @@ CREATE TABLE medicament (
     id_medicament SERIAL PRIMARY KEY,
     dci VARCHAR(100) NOT NULL,
     id_systeme_anatomique int NOT NULL,
-    FOREIGN KEY (id_systeme_anatomique) REFERENCES systeme_anatomique(id_systeme_anatomique)
-);
-
-
-create unique index uk_medicament on medicament (dci);
-
-
-CREATE TABLE medicament_conditionnement (
-    id_medicament INT NOT NULL,
     nom_commercial VARCHAR(100) NOT NULL,
     conditionnement INT NOT NULL,
-    FOREIGN KEY (id_medicament) REFERENCES medicament(id_medicament)
+    FOREIGN KEY (id_systeme_anatomique) REFERENCES systeme_anatomique(id_systeme_anatomique)
 );
-
-
-create unique index uk_medicament_conditionnement on medicament_conditionnement (id_medicament, nom_commercial, conditionnement);
+CREATE UNIQUE INDEX uk_medicament ON medicament (dci, nom_commercial, conditionnement);
 
 
 -- Création de la table 'diagnostic'
@@ -130,15 +105,12 @@ CREATE TABLE prescription (
 
 
 
-CREATE TABLE specialite_systeme_anatomique
-(
+CREATE TABLE specialite_systeme_anatomique (
     id_specialite int not null,
     id_systeme_anatomique int not null,
     FOREIGN KEY (id_specialite) REFERENCES specialite(id_specialite),
     FOREIGN KEY (id_systeme_anatomique) REFERENCES systeme_anatomique(id_systeme_anatomique)
 );
-
-
 
 create unique index on specialite_systeme_anatomique (id_specialite, id_systeme_anatomique);
 
