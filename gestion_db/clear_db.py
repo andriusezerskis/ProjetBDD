@@ -3,7 +3,7 @@ import psycopg2
 
 def clear_database():
     conn = psycopg2.connect(
-            host='localhost', 
+            host='192.168.1.10', 
             user='postgres', 
             password='azertyuiop', 
             dbname='dossier_medical')
