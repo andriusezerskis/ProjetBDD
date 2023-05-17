@@ -1,4 +1,5 @@
 SELECT
+  medecin.inami AS medecin_inami,
   medecin.nom AS medecin_nom,
   STRING_AGG(DISTINCT medicament_conditionnement.nom_commercial, ', ') AS medicament_noms
 FROM prescription
@@ -11,7 +12,7 @@ WHERE NOT EXISTS (
   WHERE ssa.id_systeme_anatomique = medicament.id_systeme_anatomique 
   AND ssa.id_specialite = medecin.id_specialite
 )
-GROUP BY medecin.nom;
+GROUP BY medecin.inami, medecin.nom;
 
 
 -- SI ON VEUT SEULEMENT LE NOM DU MEDECIN

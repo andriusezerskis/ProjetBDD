@@ -4,4 +4,4 @@ JOIN prescription pr ON p.NISS = pr.NISS_patient
 JOIN medicament m ON pr.id_medicament = m.id_medicament
 INNER JOIN medicament_conditionnement ON medicament_conditionnement.id_medicament = m.id_medicament
 WHERE medicament_conditionnement.nom_commercial = 'YOUR_MEDICAMENT'
-AND pr.date_vente > 'YOUR_DATE';
+AND pr.date_vente >= 'YOUR_DATE';
