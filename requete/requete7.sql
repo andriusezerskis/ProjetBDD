@@ -1,6 +1,11 @@
 WITH decenie_medications AS (
   SELECT
     CASE
+      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1900 AND 1909 THEN '1900-1909'
+      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1910 AND 1919 THEN '1910-1919'
+      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1920 AND 1929 THEN '1920-1929'
+      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1930 AND 1939 THEN '1930-1939'
+      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1940 AND 1949 THEN '1940-1949'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1950 AND 1959 THEN '1950-1959'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1960 AND 1969 THEN '1960-1969'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1970 AND 1979 THEN '1970-1979'
@@ -10,11 +15,10 @@ WITH decenie_medications AS (
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 2010 AND 2019 THEN '2010-2019'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 2020 AND 2029 THEN '2020-2029'
     END AS decenie,
-    medicament_conditionnement.nom_commercial
+    medicament.nom_commercial
   FROM prescription
-  INNER JOIN patient ON NISS_patient = patient.NISS
+  INNER JOIN patient ON prescription.NISS_patient = patient.NISS
   INNER JOIN medicament ON prescription.id_medicament = medicament.id_medicament
-  INNER JOIN medicament_conditionnement ON medicament_conditionnement.id_medicament = medicament.id_medicament
 ),
 decenie_medications_count AS (
   SELECT
@@ -33,7 +37,7 @@ max_medications_per_decenie AS (
 )
 SELECT
   d_m.decenie,
-  string_agg(d_m.nom_commercial, ', ') AS medecin_list,
+  string_agg(d_m.nom_commercial, ', ') AS medication_list,
   d_m.value_occurrence
 FROM decenie_medications_count d_m
 JOIN max_medications_per_decenie m_m_p_d ON d_m.decenie = m_m_p_d.decenie AND d_m.value_occurrence = m_m_p_d.max_value_occurrence

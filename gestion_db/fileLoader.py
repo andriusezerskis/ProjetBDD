@@ -1,16 +1,24 @@
 import xml.etree.ElementTree as ET
 import csv
+from io import StringIO
 
 
 def open_file(conn, file_path, node_name):
+    
     with open(file_path, 'r') as file:
         xml_text = file.read()
 
     xml_text = f'<{node_name}>{xml_text}</{node_name}>'
     root = ET.fromstring(xml_text)
-
+    
     cursor = conn.cursor()
     return root, cursor
+
+def get_text(element):
+    if element is not None and element.text is not None and element.text.strip() != '':
+        return element.text.strip()
+    else:
+        return None
 
 def get_pathologie_id(conn, pathologie_nom):
     with conn.cursor() as cur:
@@ -18,8 +26,7 @@ def get_pathologie_id(conn, pathologie_nom):
             "SELECT id_pathologie FROM pathologie WHERE nom = %s", (pathologie_nom,)
         )
         result = cur.fetchone()
-        return result[0] if result else None
-    
+        return result[0] if result else None 
 
 def get_specialite_id(conn, specialite_nom):
     with conn.cursor() as cur:
@@ -29,28 +36,40 @@ def get_specialite_id(conn, specialite_nom):
         result = cur.fetchone()
         return result[0] if result else None
 
-def insert_patients(conn,file_path, node_name):
-    
-    root, cursor = open_file(conn, file_path, node_name)
+def insert_patients(conn, file_path):
+    with open(file_path, 'r') as f:
+        content = '<root>' + f.read() + '</root>'
+        root = ET.parse(StringIO(content)).getroot()
 
-    for patient in root.findall('patient'):
-        niss = get_text(patient.find('NISS'))
-        date_de_naissance = get_text(patient.find('date_de_naissance'))
-        genre = int(get_text(patient.find('genre')))
-        inami_medecin = get_text(patient.find('inami_medecin'))
-        inami_pharmacien = get_text(patient.find('inami_pharmacien'))
-        mail = get_text(patient.find('mail'))
-        nom = get_text(patient.find('nom'))
-        prenom = get_text(patient.find('prenom'))
-        telephone = get_text(patient.find('telephone'))
-
-        sql = """INSERT INTO patient (NISS, nom, prenom, genre, date_de_naissance, mail, telephone, inami_medecin, inami_pharmacien)
-                 VALUES (%s, %s, %s, %s, TO_DATE(%s, 'MM/DD/YYYY'), %s, %s, %s, %s)"""
-        cursor.execute(sql, (niss, nom, prenom, genre, date_de_naissance, mail, telephone, inami_medecin, inami_pharmacien))
-
-    conn.commit()
-    cursor.close()
-
+        cur = conn.cursor()
+        for child in root:
+            if child.tag == 'NISS':
+                NISS = child.text
+            elif child.tag == 'nom':
+                nom = child.text
+            elif child.tag == 'prenom':
+                prenom = child.text
+            elif child.tag == 'genre':
+                genre = int(child.text)
+            elif child.tag == 'date_de_naissance':
+                date_de_naissance = child.text
+            elif child.tag == 'mail':
+                mail = child.text
+            elif child.tag == 'telephone':
+                telephone = child.text
+            elif child.tag == 'inami_medecin':
+                inami_medecin = child.text
+            elif child.tag == 'inami_pharmacien':
+                inami_pharmacien = child.text
+                
+            if child.tag == 'telephone': 
+                cur.execute(
+                    "INSERT INTO patient VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    (NISS, nom, prenom, genre, date_de_naissance, mail, telephone, inami_medecin, inami_pharmacien)
+                )
+        conn.commit()
+        cur.close()
+        
 def insert_medecins(conn,file_path, node_name):
     
     root, cursor = open_file(conn, file_path, node_name)
@@ -96,7 +115,7 @@ def insert_specialites(conn, file_path, node_name):
         query = "INSERT INTO specialite (nom) VALUES (%s) ON CONFLICT(nom) DO NOTHING;"
         cursor.execute(query, (name,))
         
-        medicaments = specialite.findall('medicament')  # Pas besoin d'utiliser get_text ici
+        medicaments = specialite.findall('medicament')  
         for medicament in medicaments:
             query = "INSERT INTO systeme_anatomique (nom) VALUES (%s) ON CONFLICT(nom) DO NOTHING;"
             cursor.execute(query, (get_text(medicament),))
@@ -136,12 +155,11 @@ def insert_prescriptions(conn, file_path):
 
         for row in reader:
             NISS_patient, medecin, inami_medecin, pharmacien, inami_pharmacien, medicament_nom_commercial, DCI, date_prescription, date_vente, duree_traitement = row
-            insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement)
+            add_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement)
 
-def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement):
+def add_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement):
     with conn.cursor() as cur:
-        # Get medicament_id from medicament_nom_commercial
-        cur.execute("SELECT id_medicament FROM medicament_conditionnement WHERE nom_commercial = %s", (medicament_nom_commercial,))
+        cur.execute("SELECT id_medicament FROM medicament WHERE nom_commercial = %s", (medicament_nom_commercial,))
         medicament_id = cur.fetchone()
         if medicament_id:
             medicament_id = medicament_id[0]
@@ -186,18 +204,14 @@ def insert_medicaments(conn, file_path):
                     (systeme_anatomique,)
                 )
                 cur.execute(
-                    "INSERT INTO medicament (dci, id_systeme_anatomique) SELECT %s, id_systeme_anatomique from systeme_anatomique s where s.nom=%s ON CONFLICT (dci) DO NOTHING",
-                    (dci, systeme_anatomique)
-                )
-                cur.execute(
-                    "INSERT INTO medicament_conditionnement (id_medicament, nom_commercial, conditionnement) SELECT id_medicament, %s, %s from medicament where dci=%s ON CONFLICT(id_medicament, nom_commercial, conditionnement) DO NOTHING",
-                    (nom_commercial, conditionnement, dci) 
+                    """
+                    INSERT INTO medicament (dci, id_systeme_anatomique, nom_commercial, conditionnement) 
+                    SELECT %s, id_systeme_anatomique, %s, %s 
+                    FROM systeme_anatomique 
+                    WHERE nom = %s
+                    ON CONFLICT (dci, nom_commercial, conditionnement) DO NOTHING
+                    """, 
+                    (dci, nom_commercial, conditionnement, systeme_anatomique)
                 )
         conn.commit()
-
-def get_text(element):
-    if element is not None and element.text is not None and element.text.strip() != '':
-        return element.text.strip()
-    else:
-        return None
 
