@@ -4,14 +4,21 @@ from io import StringIO
 
 
 def open_file(conn, file_path, node_name):
+    
     with open(file_path, 'r') as file:
         xml_text = file.read()
 
     xml_text = f'<{node_name}>{xml_text}</{node_name}>'
     root = ET.fromstring(xml_text)
-
+    
     cursor = conn.cursor()
     return root, cursor
+
+def get_text(element):
+    if element is not None and element.text is not None and element.text.strip() != '':
+        return element.text.strip()
+    else:
+        return None
 
 def get_pathologie_id(conn, pathologie_nom):
     with conn.cursor() as cur:
@@ -19,8 +26,7 @@ def get_pathologie_id(conn, pathologie_nom):
             "SELECT id_pathologie FROM pathologie WHERE nom = %s", (pathologie_nom,)
         )
         result = cur.fetchone()
-        return result[0] if result else None
-    
+        return result[0] if result else None 
 
 def get_specialite_id(conn, specialite_nom):
     with conn.cursor() as cur:
@@ -64,7 +70,6 @@ def insert_patients(conn, file_path):
         conn.commit()
         cur.close()
         
-
 def insert_medecins(conn,file_path, node_name):
     
     root, cursor = open_file(conn, file_path, node_name)
@@ -110,7 +115,7 @@ def insert_specialites(conn, file_path, node_name):
         query = "INSERT INTO specialite (nom) VALUES (%s) ON CONFLICT(nom) DO NOTHING;"
         cursor.execute(query, (name,))
         
-        medicaments = specialite.findall('medicament')  # Pas besoin d'utiliser get_text ici
+        medicaments = specialite.findall('medicament')  
         for medicament in medicaments:
             query = "INSERT INTO systeme_anatomique (nom) VALUES (%s) ON CONFLICT(nom) DO NOTHING;"
             cursor.execute(query, (get_text(medicament),))
@@ -150,11 +155,10 @@ def insert_prescriptions(conn, file_path):
 
         for row in reader:
             NISS_patient, medecin, inami_medecin, pharmacien, inami_pharmacien, medicament_nom_commercial, DCI, date_prescription, date_vente, duree_traitement = row
-            insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement)
+            add_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement)
 
-def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement):
+def add_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, medicament_nom_commercial, date_prescription, date_vente, duree_traitement):
     with conn.cursor() as cur:
-        # Get medicament_id from medicament_nom_commercial
         cur.execute("SELECT id_medicament FROM medicament WHERE nom_commercial = %s", (medicament_nom_commercial,))
         medicament_id = cur.fetchone()
         if medicament_id:
@@ -168,7 +172,6 @@ def insert_prescription(conn, NISS_patient, inami_medecin, inami_pharmacien, med
             (NISS_patient, inami_medecin, inami_pharmacien, medicament_id, date_prescription, date_vente, duree_traitement)
         )
         conn.commit()
-
 
 def insert_pathologies(conn, file_path):
     with open(file_path, 'r', encoding='utf-8') as csvfile:
@@ -211,11 +214,4 @@ def insert_medicaments(conn, file_path):
                     (dci, nom_commercial, conditionnement, systeme_anatomique)
                 )
         conn.commit()
-
-
-def get_text(element):
-    if element is not None and element.text is not None and element.text.strip() != '':
-        return element.text.strip()
-    else:
-        return None
 
