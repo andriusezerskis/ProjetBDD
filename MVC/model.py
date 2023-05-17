@@ -105,16 +105,16 @@ class Database:
                 cursor.execute("""
                     SELECT
                         prescription.date_vente,
-                        medicament_conditionnement.nom_commercial,
+                        medicament.nom_commercial,
                         prescription.duree_traitement
                     FROM prescription
                     JOIN medicament ON prescription.id_medicament = medicament.id_medicament
-                    JOIN medicament_conditionnement ON medicament.id_medicament = medicament_conditionnement.id_medicament
                     WHERE prescription.NISS_patient = %s;
                 """, (NISS_patient,))
                 traitements_info = cursor.fetchall()
         
         return traitements_info
+
     
     def get_contact_ref(self, NISS_patient):
         with self._connect() as conn:
