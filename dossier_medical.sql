@@ -1,4 +1,3 @@
-
 -- Création de la table 'specialite'
 CREATE TABLE specialite (
     id_specialite SERIAL PRIMARY KEY,
@@ -34,7 +33,7 @@ CREATE TABLE medecin (
     inami VARCHAR(15) PRIMARY KEY,
     nom VARCHAR(50) NOT NULL,
     mail VARCHAR(100),
-    id_specialite int,
+    id_specialite int NOT NULL,
     telephone VARCHAR(15),
     FOREIGN KEY (id_specialite) REFERENCES specialite(id_specialite)
 );
@@ -113,8 +112,3 @@ CREATE TABLE specialite_systeme_anatomique (
 );
 
 create unique index on specialite_systeme_anatomique (id_specialite, id_systeme_anatomique);
-
-
-
-
-

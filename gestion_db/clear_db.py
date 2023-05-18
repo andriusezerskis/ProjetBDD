@@ -1,12 +1,8 @@
-
 import psycopg2
 
 def clear_database():
-    conn = psycopg2.connect(
-            host='192.168.1.10', 
-            user='postgres', 
-            password='azertyuiop', 
-            dbname='dossier_medical')
+    conn = psycopg2.connect(host='localhost', user='postgres',
+                            password='azertyuiop', dbname='dossier_medical')
     
     tables = ['patient', 'medecin', 'pharmacien', 'pathologie',
                 'medicament', 'diagnostique', 'prescription', 'specialite']
@@ -16,4 +12,6 @@ def clear_database():
         conn.commit()
 
 if __name__ == '__main__':
+    print('Nettoyage de la base de données...')
     clear_database()
+    print('Base de données nettoyée.')

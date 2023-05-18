@@ -123,7 +123,6 @@ def insert_specialites(conn, file_path, node_name):
             cursor.execute(query, (name, get_text(medicament)))
 
 
-
     conn.commit()
     cursor.close()
 

@@ -6,6 +6,9 @@ def main():
     conn = psycopg2.connect(host='localhost', user='postgres',
                             password='azertyuiop', dbname='dossier_medical')
     
+    file_path = 'data/specialites.xml'
+    node_name = 'specialite'
+    insert_specialites(conn, file_path, node_name)
 
     file_path = 'data/pathologies.csv'
     insert_pathologies(conn, file_path)
@@ -24,10 +27,7 @@ def main():
     node_name = 'pharmacien'
     insert_pharmaciens(conn, file_path, node_name)
 
-    file_path = 'data/specialites.xml'
-    node_name = 'specialite'
-    insert_specialites(conn, file_path, node_name)
-
+   
     file_path = 'data/diagnostiques.xml'
     node_name = 'diagnostique'
     insert_diagnostics(conn, file_path, node_name)
