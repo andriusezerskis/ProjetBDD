@@ -17,7 +17,8 @@ def main():
     insert_medicaments(conn, file_path)
 
     file_path = 'data/patients_corrige.xml'
-    insert_patients(conn, file_path)
+    node_name = 'patient'
+    insert_patients(conn, file_path, node_name)
 
     file_path = 'data/medecins.xml'
     node_name = 'medecin'
