@@ -1,11 +1,6 @@
 WITH decenie_medications AS (
   SELECT
     CASE
-      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1900 AND 1909 THEN '1900-1909'
-      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1910 AND 1919 THEN '1910-1919'
-      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1920 AND 1929 THEN '1920-1929'
-      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1930 AND 1939 THEN '1930-1939'
-      WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1940 AND 1949 THEN '1940-1949'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1950 AND 1959 THEN '1950-1959'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1960 AND 1969 THEN '1960-1969'
       WHEN EXTRACT(YEAR FROM patient.date_de_naissance) BETWEEN 1970 AND 1979 THEN '1970-1979'
