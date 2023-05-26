@@ -56,7 +56,7 @@ class Controller:
             self.view.print_summary("Médecin", "ajouté(e)", data)
         else:
             self.view.display_error(
-                "Un médecin avec ce numéro INAMI existe déjà.")
+                "Erreur lors de l'ajout du médecin. Veuillez réessayer.")
         self.view.main_menu()
 
     def add_pharmacien(self):
