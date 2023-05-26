@@ -1,5 +1,13 @@
+"""
+Projet de BDD : réaliser une base de données en SQL.
+Date : 26/05/2023
+Auteurs : Matias Nieto Navarrete, Andrius Ezerskis, Moïra Vanderslagmolen
+Matricules : 502920, 542698, 547486
+Section : B-INFO
+"""
+
 import psycopg2
-from psycopg2 import sql, Error
+from psycopg2 import Error
 
 class Database:
     def __init__(self):
